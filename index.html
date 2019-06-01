@@ -5,26 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <title>Ryan's Blood Sugar Manager</title>
 </head>
 
 <body>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6" id="banner"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6 display">
+            <form>
+                <div class="form-group">
+                    <label for="weight">Email address</label>
+                    <input type="weight" class="form-control" id="weightInput" aria-describedby=""
+                        placeholder="Enter weight in lbs.">
+                </div>
+                <div class="form-group">
+                    <label for="sensitivity">Sensitivity</label>
+                    <input type="sensitivity" class="form-control" id="sensitivityInput" placeholder="Sensitivity">
+                    <small id="sensitivityChart1" class="form-text text-muted">inactive&#9.6-1.2 </small>
+                    <small id="sensitivityChart2" class="form-text text-muted">active&#9.5-1 </small>
+                    <small id="sensitivityChart3" class="form-text text-muted">very active&#9.4-.8 </small>
+                </div>
+                <button type="button" class="btn btn-primary" id="calcStats">Calculate</button>
+            </form>
+        </div>
+    </div>
 
     <script src="assets/javascript/script.js"></script>
-
 </body>
-
 </html>
