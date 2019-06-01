@@ -1,8 +1,7 @@
 body{
     background-image: url("../images/background.png");
-    height: 100vh;
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: cover;
     overflow-x: hidden;
 }
 
@@ -11,10 +10,11 @@ body{
     height: 22vh;
     background-repeat: no-repeat;
     background-size: 100% 22vh;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }
 
 .display {
     background-color: white;
     padding: 10px 10px 10px 10px;
+    margin: 10px 0 10px 0;
 }
