@@ -137,6 +137,7 @@ $("document").ready(() => {
 
         if (bolusObj.total < 0) {
             var low = 90 + bolusObj.total * cf;
+            console.log(low);
             if (low < 80) {
                 bolusObj.lowFlag = true;
                 bolusObj.lowBs = low;
