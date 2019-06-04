@@ -16,5 +16,6 @@ body{
 .display {
     background-color: white;
     padding: 10px 10px 10px 10px;
-    margin: 10px 0 10px 0;
+    margin: 10px 10px 10px 10px;
+    text-align: center;
 }

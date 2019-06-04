@@ -32,13 +32,13 @@
         <div class="col-6 display">
             <form>
                 <div class="form-group">
-                    <label for="weight">Email address</label>
+                    <label for="weight">Enter body weight in lbs.</label>
                     <input type="weight" class="form-control" id="weightInput" aria-describedby=""
-                        placeholder="Enter weight in lbs.">
+                        placeholder="">
                 </div>
                 <div class="form-group">
                     <label for="sensitivity">Sensitivity</label>
-                    <input type="sensitivity" class="form-control" id="sensitivityInput" placeholder="Sensitivity">
+                    <input type="sensitivity" class="form-control" id="sensitivityInput" placeholder="">
                     <small id="sensitivityChart1" class="form-text text-muted">inactive&#9.6-1.2 </small>
                     <small id="sensitivityChart2" class="form-text text-muted">active&#9.5-1 </small>
                     <small id="sensitivityChart3" class="form-text text-muted">very active&#9.4-.8 </small>
@@ -50,8 +50,84 @@
 
     <div class="row">
         <div class="col-2"></div>
-        <div id="statDisplay">
+        <div class="col-4 display" id="statDisplay"></div>
+        <div class="col-4 display" id="bolusDisplay">
+            <h3>Bolus Calculator</h3>
+            <div class="row">
+                <div class="col-6">
+                    <form>
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Meals</label>
+                            <select class="form-control" id="mealSelect">
+                                <option>Post-Workout</option>
+                                <option>Breakfast</option>
+                                <option>Lunch</option>
+                                <option>Snack</option>
+                                <option>Dinner</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Blood Sugar</label>
+                            <input type="" class="form-control" id="bsInput" aria-describedby="">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Carbs</label>
+                            <input type="" class="form-control" id="carbsInput" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Protein</label>
+                            <input type="" class="form-control" id="proteinInput" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Last Bolus Dose</label>
+                            <input type="" class="form-control" id="lastDoseInput" value=0>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Hours Since Bolus Taken</label>
+                            <input type="" class="form-control" id="hoursInput" value=0>
+                        </div>
+                        <button type="button" class="btn btn-success" id="calcBolusButton">Calculate Bolus</button>
+                    </form>
+                </div>
+                <div class="col-6" id="totalBolusDisplay">
 
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal" id="lowBsModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Warning: Low Blood Sugar Predicted!!!</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="lowBsModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reverseBasalModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reverse Basal Calculation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="reverseBasalModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
