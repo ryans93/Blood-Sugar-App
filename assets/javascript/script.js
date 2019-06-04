@@ -136,11 +136,11 @@ $("document").ready(() => {
         bolusObj.total = bolusObj.bolus + bolusObj.correction - bolusObj.active;
 
         if (bolusObj.total < 0) {
-            var low = bs + bolusObj.total * cf;
+            var low = 90 + bolusObj.total * cf;
             if (low < 80) {
                 bolusObj.lowFlag = true;
                 bolusObj.lowBs = low;
-                bolusObj.carbCorrection = (90 - bs) * raise;
+                bolusObj.carbCorrection = (90 - low) / raise;
             }
         }
 
