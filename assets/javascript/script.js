@@ -12,6 +12,11 @@ var offset;
 var tdi;
 var meals = [
     {
+        text: "-",
+        carbs: 0,
+        protein: 0
+    },
+    {
         text: "Post-workout",
         carbs: 5,
         protein: 36
@@ -68,7 +73,7 @@ $("document").ready(() => {
             $stats.append("<h5>7am/7pm offset\t" + offset.toFixed(1) + "</h5>");
             $stats.append("<h3>Meals</h3>");
             var totalBolus = 0
-            for (var i = 0; i < meals.length; i++) {
+            for (var i = 1; i < meals.length; i++) {
                 var bolus = meals[i].carbs / ic + meals[i].protein / ip;
                 totalBolus += bolus;
                 $stats.append("<h5>" + meals[i].text + "\tBolus: " + bolus.toFixed(1) + "</h5>");
