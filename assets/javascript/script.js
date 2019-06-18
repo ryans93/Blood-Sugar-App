@@ -5,9 +5,10 @@ var ip;
 var raise;
 var cf;
 var basal;
-var estimatedBasal;
-// carbs must be between 225-325
-var estimatedSensco;
+var estimatedBasal1;
+var estimatedSensco1;
+var estimatedBasal2;
+var estimatedSensco2;
 var offset;
 var tdi;
 var meals = [
@@ -58,8 +59,10 @@ $("document").ready(() => {
             raise = 770.54574 * Math.pow(weight, -1.000424505);
             cf = parseFloat(raise * ic);
             basal = parseFloat(weight * 0.453592 * sensCo / 2);
-            estimatedBasal = (500 - (175 + 175 * .36)) / ic;
-            estimatedSensco = estimatedBasal * 2 / (weight * 0.453592);
+            estimatedBasal1 = (500 - 325) / ic;
+            estimatedSensco1 = estimatedBasal1 * 2 / (weight * 0.453592);
+            estimatedBasal2 = (500 - 225) / ic
+            estimatedSensco2 = estimatedBasal2 * 2 / (weight * 0.453592);
             offset = 1.62 * basal / 24;
             $stats.show();
             $bolus.show();
@@ -68,8 +71,8 @@ $("document").ready(() => {
             $stats.append("<h5>Insulin:Protein Ratio\t" + ip.toFixed(1) + "</h5>");
             $stats.append("<h5>Correction Factor\t" + cf.toFixed(1) + "</h5>");
             $stats.append("<h5>Basal\t" + basal.toFixed(1) + "</h5>");
-            $stats.append("<h5>Estimated Basal (500 rule)\t" + estimatedBasal.toFixed(1) + "</h5>");
-            $stats.append("<h5>Estimated Sensitivity\t" + estimatedSensco.toFixed(2) + "</h5>");
+            $stats.append("<h5>Estimated Basal (500 rule)\t" + estimatedBasal1.toFixed(1) + "-" + estimatedBasal2.toFixed(1) + "</h5>");
+            $stats.append("<h5>Estimated Sensitivity\t" + estimatedSensco1.toFixed(2) + "-" + estimatedSensco2.toFixed(2) + "</h5>");
             $stats.append("<h5>7am/7pm offset\t" + offset.toFixed(1) + "</h5>");
             $stats.append("<h3>Meals</h3>");
             var totalBolus = 0
