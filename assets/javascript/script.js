@@ -87,7 +87,7 @@ $("document").ready(() => {
         }
     });
 
-    $("#mealSelect").click(() => {
+    $("#mealSelect").change(() => {
         var meal = $("#mealSelect").val();
         for (var i = 0; i < meals.length; i++) {
             if (meal.toLowerCase() === meals[i].text.toLowerCase()) {
