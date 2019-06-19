@@ -11,6 +11,7 @@ var estimatedBasal2;
 var estimatedSensco2;
 var offset;
 var tdi;
+var goalTDI;
 var meals = [
     {
         text: "-",
@@ -82,7 +83,9 @@ $("document").ready(() => {
                 $stats.append("<h5>" + meals[i].text + "\tBolus: " + bolus.toFixed(1) + "</h5>");
             }
             tdi = basal + totalBolus;
+            goalTDI = 2.7595473 * Math.pow(10, -4) * Math.pow(weight, 2) + .2283867552 * weight - 1.548147422;
             $stats.append("<h5>TDI:\t" + tdi.toFixed(1) + "</h5>");
+            $stats.append("<h5>Goal TDI (500 rule):\t" + goalTDI.toFixed(1) + "</h5>");
             $stats.append("<h5>" + (100 * totalBolus / tdi).toFixed(1) + "% bolus\t" + (100 * basal / tdi).toFixed(1) + "% basal</h5>");
         }
     });
@@ -134,9 +137,9 @@ $("document").ready(() => {
         bolusObj.bolus = carbs / ic + protein / ip;
 
         var hyperMod = 1;
-        if (bs >= 130) {
+        /*if (bs >= 130) {
             hyperMod = bs * .0015 + .806151;
-        }
+        }*/
         bolusObj.correction = (bs - 90) / cf * hyperMod;
 
         bolusObj.active = lastDose * (-.01002331 * Math.pow(hours, 4) + .0966847967 * Math.pow(hours, 3) - .2579059829 * Math.pow(hours, 2) - .1248510749 * hours + 1.003651904);

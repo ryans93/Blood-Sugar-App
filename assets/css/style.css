@@ -3,6 +3,7 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     overflow-x: hidden;
+    height: 100vh;
 }
 
 #banner {
@@ -16,6 +17,6 @@ body{
 .display {
     background-color: white;
     padding: 10px 10px 10px 10px;
-    margin: 10px 10px 10px 10px;
+    margin: 10px 0px 10px 0px;
     text-align: center;
 }
