@@ -53,6 +53,7 @@ $("document").ready(() => {
 
     $("#calcStats").on("click", function () {
         if ($("#weightInput").val() !== "" && $("#sensitivityInput").val() !== "") {
+            $("body").css("height", "100%");
             weight = parseFloat($("#weightInput").val());
             sensCo = parseFloat($("#sensitivityInput").val());
             ic = 1800 / weight;
