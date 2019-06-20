@@ -75,7 +75,7 @@ $("document").ready(() => {
             $stats.append("<h5>Basal\t" + basal.toFixed(1) + "</h5>");
             $stats.append("<h5>Estimated Basal (500 rule)\t" + estimatedBasal1.toFixed(1) + "-" + estimatedBasal2.toFixed(1) + "</h5>");
             $stats.append("<h5>Estimated Sensitivity\t" + estimatedSensco1.toFixed(2) + "-" + estimatedSensco2.toFixed(2) + "</h5>");
-            $stats.append("<h5>7am/7pm offset\t" + offset.toFixed(1) + "</h5>");
+            $stats.append("<h5>8am/2pm offset\t" + offset.toFixed(1) + "</h5>");
             $stats.append("<h3>Meals</h3>");
             var totalBolus = 0
             for (var i = 1; i < meals.length; i++) {
@@ -95,7 +95,6 @@ $("document").ready(() => {
         var meal = $("#mealSelect").val();
         for (var i = 0; i < meals.length; i++) {
             if (meal.toLowerCase() === meals[i].text.toLowerCase()) {
-                console.log("here");
                 $("#carbsInput").val(meals[i].carbs);
                 $("#proteinInput").val(meals[i].protein);
                 break;
@@ -149,7 +148,6 @@ $("document").ready(() => {
 
         if (bolusObj.total < 0) {
             var low = 90 + bolusObj.total * cf;
-            console.log(low);
             if (low < 80) {
                 bolusObj.lowFlag = true;
                 bolusObj.lowBs = low;
