@@ -110,11 +110,19 @@ $("document").ready(() => {
         var hours = parseFloat($("#hoursInput").val());
         if (!isNaN(bloodSugar)) {
             var bolusObj = calculateBolus(bloodSugar, carbs, protein, lastDose, hours);
+            var symlin = bolusObj.total * 3.47;
+            if (symlin % 15 >= 7.5){
+                symlin += 15 - symlin % 15;
+            }
+            else{
+                symlin -= symlin % 15;
+            }
             var $bolusDisplay = $("#totalBolusDisplay");
             $bolusDisplay.html("<h5>Bolus\t" + bolusObj.bolus.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h5>Correction\t" + bolusObj.correction.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(1) + "</h4>");
+            $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
             if (bolusObj.lowFlag) {
                 var body = $("#lowBsModalBody");
                 body.html("<h5>Low blood sugar of " + bolusObj.lowBs.toFixed(0) + " predicted.</h5>");
