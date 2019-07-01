@@ -143,7 +143,8 @@ $("document").ready(() => {
             carbCorrection: 0
         };
         bolusObj.bolus = carbs / ic + protein / ip;
-
+        // time modifier accounting for longer absorbtion time observed
+        hours -= .29;
         var hyperMod = 1;
         /*if (bs >= 130) {
             hyperMod = bs * .0015 + .806151;
