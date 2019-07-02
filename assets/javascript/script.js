@@ -88,6 +88,7 @@ $("document").ready(() => {
             $stats.append("<h5>TDI:\t" + tdi.toFixed(1) + "</h5>");
             $stats.append("<h5>Goal TDI (500 rule):\t" + goalTDI.toFixed(1) + "</h5>");
             $stats.append("<h5>" + (100 * totalBolus / tdi).toFixed(1) + "% bolus\t" + (100 * basal / tdi).toFixed(1) + "% basal</h5>");
+            $stats.append("<button class='btn btn-primary' id='basalCalculatorButton'>Basal Calculator</button>");
         }
     });
 
@@ -111,10 +112,10 @@ $("document").ready(() => {
         if (!isNaN(bloodSugar)) {
             var bolusObj = calculateBolus(bloodSugar, carbs, protein, lastDose, hours);
             var symlin = bolusObj.total * 3.47;
-            if (symlin % 15 >= 7.5){
+            if (symlin % 15 >= 7.5) {
                 symlin += 15 - symlin % 15;
             }
-            else{
+            else {
                 symlin -= symlin % 15;
             }
             var $bolusDisplay = $("#totalBolusDisplay");
@@ -166,4 +167,62 @@ $("document").ready(() => {
 
         return bolusObj;
     }
+
+    $("body").on("click", "#basalCalculatorButton", () => {
+        $("#basalModal").modal("show");
+    });
+
+    $("#calcBasalButton").click(() => {
+        var basal = parseInt($("#basalInput").val());
+        var pmBS = parseInt($("#pmBSInput").val());
+        var pmHour = parseInt($("#pmHourInput").val());
+        var pmTime = $("#pmTimeInput").val();
+        var amBS = parseInt($("#amBSInput").val());
+        var amHour = parseInt($("#amHourInput").val());
+        var amTime = $("#amTimeInput").val();
+        var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452];
+
+        if (!isNaN(pmBS) && !isNaN(amBS)) {
+            var hourly = basal / 24;
+            var predictedBS = pmBS;
+            var bedTime;
+            var wakeTime;
+
+            if(pmTime === "am"){
+                bedTime = pmHour % 12;
+            }
+            else{
+                if (pmHour == 12){
+                    bedTime = 12;
+                }
+                else{
+                    bedTime = pmHour + 12;
+                }
+            }
+
+            if(amTime === "am"){
+                wakeTime = amHour % 12;
+            }
+            else{
+                if (amHour == 12){
+                    wakeTime = 12;
+                }
+                else{
+                    wakeTime = amHour + 12;
+                }
+            }
+
+            for (var count = bedTime; count < wakeTime; count++) {
+                predictedBS = predictedBS + (rates[count] * hourly - hourly) * cf;
+            }
+
+            var difference = amBS - predictedBS;
+            var timeDifference = Math.abs(bedTime - wakeTime);
+
+            var newBasal = basal + difference / cf * 24 / timeDifference;
+
+            $("#basalResult").html("<h4>" + newBasal.toFixed(0) + " units</h4>");
+        }
+    });
+
 })

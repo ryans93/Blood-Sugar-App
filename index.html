@@ -116,6 +116,86 @@
         </div>
     </div>
 
+    <div class="modal" id="basalModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Suggested Basal Calculator</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="basalModalBody">
+                    <form>
+                        <div class="form-group">
+                            <label for="">Basal</label>
+                            <input type="" class="form-control" id="basalInput" aria-describedby="">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Evening Blood Sugar</label>
+                            <input type="" class="form-control" id="pmBSInput">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Time Checked</label>
+                            <select class="form-control" id="pmHourInput">
+                                <option>12</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                                <option>10</option>
+                                <option>11</option>
+                            </select>
+                            <select class="form-control" id="pmTimeInput">
+                                <option>am</option>
+                                <option>pm</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Morning Blood Sugar</label>
+                            <input type="" class="form-control" id="amBSInput">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Time Checked</label>
+                            <select class="form-control" id="amHourInput">
+                                <option>12</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                                <option>10</option>
+                                <option>11</option>
+                            </select>
+                            <select class="form-control" id="amTimeInput">
+                                <option>am</option>
+                                <option>pm</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <button type="button" class="btn btn-success" id="calcBasalButton">Calculate Basal</button>
+                            </div>
+                            <div class="col-8" id="basalResult"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/javascript/script.js"></script>
 </body>
 
