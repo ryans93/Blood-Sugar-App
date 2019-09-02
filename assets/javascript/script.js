@@ -124,6 +124,12 @@ $("document").ready(() => {
             $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(1) + "</h4>");
             $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
+            if (bolusObj.time >= 0){
+                $bolusDisplay.append("<h5>Dosage Time\n" + Math.floor(bolusObj.time) + " hours " + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
+            }
+            else{
+                $bolusDisplay.append("<h5>Dosage Time\n" + Math.ceil(bolusObj.time) + " hours " + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
+            }
             if (bolusObj.lowFlag) {
                 var body = $("#lowBsModalBody");
                 body.html("<h5>Low blood sugar of " + bolusObj.lowBs.toFixed(0) + " predicted.</h5>");
@@ -141,7 +147,8 @@ $("document").ready(() => {
             total: 0,
             lowFlag: false,
             lowBs: 0,
-            carbCorrection: 0
+            carbCorrection: 0,
+            time: 0
         };
         bolusObj.bolus = carbs / ic + protein / ip;
         // time modifier accounting for longer absorbtion time observed
@@ -164,7 +171,8 @@ $("document").ready(() => {
                 bolusObj.carbCorrection = (90 - low) / raise;
             }
         }
-
+        if (bs)
+        bolusObj.time = ((bs - 90) / ((bolusObj.active + bolusObj.total) * cf) + .0411111111) / .2683333333 + 0.04; 
         return bolusObj;
     }
 
@@ -224,5 +232,4 @@ $("document").ready(() => {
             $("#basalResult").html("<h4>" + newBasal.toFixed(0) + " units</h4>");
         }
     });
-
-})
+});
