@@ -125,10 +125,10 @@ $("document").ready(() => {
             $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(1) + "</h4>");
             $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
             if (bolusObj.time >= 0){
-                $bolusDisplay.append("<h5>Dosage Time\n" + Math.floor(bolusObj.time) + " hours " + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
+                $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.floor(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
             }
             else{
-                $bolusDisplay.append("<h5>Dosage Time\n" + Math.ceil(bolusObj.time) + " hours " + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
+                $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.ceil(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
             }
             if (bolusObj.lowFlag) {
                 var body = $("#lowBsModalBody");
