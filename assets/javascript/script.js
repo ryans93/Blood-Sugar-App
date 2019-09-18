@@ -19,30 +19,35 @@ var meals = [
         protein: 0
     },
     {
+        text: "Breakfast",
+        carbs: 41,
+        protein: 44
+    },
+    {
+        text: "Lunch",
+        carbs: 24,
+        protein: 46
+    },
+    {
+        text: "Snack",
+        carbs: 20,
+        protein: 30
+    },
+    {
         text: "Post-workout",
         carbs: 5,
         protein: 36
     },
     {
-        text: "Breakfast",
-        carbs: 60,
-        protein: 42
-    },
-    {
-        text: "Lunch",
-        carbs: 28,
-        protein: 35
-    },
-    {
-        text: "Snack",
-        carbs: 18,
-        protein: 29
-    },
-    {
         text: "Dinner",
-        carbs: 70,
-        protein: 33
-    }
+        carbs: 61,
+        protein: 32
+    },
+    {
+        text: "Bed",
+        carbs: 10,
+        protein: 20
+    },
 ];
 
 $("document").ready(() => {
@@ -61,9 +66,12 @@ $("document").ready(() => {
             raise = 770.54574 * Math.pow(weight, -1.000424505);
             cf = parseFloat(raise * ic);
             basal = parseFloat(weight * 0.453592 * sensCo / 2);
-            estimatedBasal1 = (500 - 325) / ic;
+            var lbm = 182.6 * 0.453592;
+            var bmr = (370 + (21.6 * lbm) - lbm) * 1.1;
+            console.log(bmr);
+            estimatedBasal1 = bmr * .45 / 4 / ic;
             estimatedSensco1 = estimatedBasal1 * 2 / (weight * 0.453592);
-            estimatedBasal2 = (500 - 225) / ic
+            estimatedBasal2 = bmr * .65 / 4 / ic;
             estimatedSensco2 = estimatedBasal2 * 2 / (weight * 0.453592);
             offset = 1.62 * basal / 24;
             $stats.show();
@@ -73,7 +81,7 @@ $("document").ready(() => {
             $stats.append("<h5>Insulin:Protein Ratio\t" + ip.toFixed(1) + "</h5>");
             $stats.append("<h5>Correction Factor\t" + cf.toFixed(1) + "</h5>");
             $stats.append("<h5>Basal\t" + basal.toFixed(1) + "</h5>");
-            $stats.append("<h5>Estimated Basal (500 rule)\t" + estimatedBasal1.toFixed(1) + "-" + estimatedBasal2.toFixed(1) + "</h5>");
+            $stats.append("<h5>Estimated Basal\t" + estimatedBasal1.toFixed(1) + "-" + estimatedBasal2.toFixed(1) + "</h5>");
             $stats.append("<h5>Estimated Sensitivity\t" + estimatedSensco1.toFixed(2) + "-" + estimatedSensco2.toFixed(2) + "</h5>");
             $stats.append("<h5>8am/2pm offset\t" + offset.toFixed(1) + "</h5>");
             $stats.append("<h3>Meals</h3>");
