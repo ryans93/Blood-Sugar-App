@@ -117,8 +117,9 @@ $("document").ready(() => {
         var protein = parseInt($("#proteinInput").val());
         var lastDose = parseInt($("#lastDoseInput").val());
         var hours = parseFloat($("#hoursInput").val());
+        var activity = $("#activitySelect").val();
         if (!isNaN(bloodSugar)) {
-            var bolusObj = calculateBolus(bloodSugar, carbs, protein, lastDose, hours);
+            var bolusObj = calculateBolus(bloodSugar, carbs, protein, lastDose, hours, activity);
             var symlin = bolusObj.total * 3.47;
             if (symlin % 15 >= 7.5) {
                 symlin += 15 - symlin % 15;
@@ -147,7 +148,7 @@ $("document").ready(() => {
         }
     });
 
-    function calculateBolus(bs, carbs, protein, lastDose, hours) {
+    function calculateBolus(bs, carbs, protein, lastDose, hours, activity) {
         var bolusObj = {
             bolus: 0,
             correction: 0,
@@ -169,7 +170,7 @@ $("document").ready(() => {
 
         bolusObj.active = lastDose * (-.01002331 * Math.pow(hours, 4) + .0966847967 * Math.pow(hours, 3) - .2579059829 * Math.pow(hours, 2) - .1248510749 * hours + 1.003651904);
 
-        bolusObj.total = bolusObj.bolus + bolusObj.correction - bolusObj.active;
+        bolusObj.total = (bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity;
 
         if (bolusObj.total < 0) {
             var low = 90 + bolusObj.total * cf;
