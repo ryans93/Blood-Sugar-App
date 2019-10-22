@@ -20,13 +20,13 @@ var meals = [
     },
     {
         text: "Breakfast",
-        carbs: 41,
-        protein: 44
+        carbs: 64,
+        protein: 49
     },
     {
         text: "Lunch",
         carbs: 24,
-        protein: 46
+        protein: 28
     },
     {
         text: "Snack",
@@ -35,12 +35,12 @@ var meals = [
     },
     {
         text: "Post-workout",
-        carbs: 5,
-        protein: 36
+        carbs: 6,
+        protein: 48
     },
     {
         text: "Dinner",
-        carbs: 61,
+        carbs: 71,
         protein: 32
     },
     {
