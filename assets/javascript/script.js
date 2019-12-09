@@ -5,6 +5,7 @@ var ip;
 var raise;
 var cf;
 var basal;
+var bolus;
 var estimatedBasal1;
 var estimatedSensco1;
 var estimatedBasal2;
@@ -49,6 +50,21 @@ var meals = [
         protein: 20
     },
 ];
+
+var config = {
+    apiKey: "AIzaSyBzsI73lH5-qLrt7s4Br439ZQWeASwcWPA",
+    authDomain: "blood-sugar-app.firebaseapp.com",
+    databaseURL: "https://blood-sugar-app.firebaseio.com",
+    projectId: "blood-sugar-app",
+    storageBucket: "blood-sugar-app.appspot.com",
+    messagingSenderId: "825167606606",
+    appId: "1:825167606606:web:4b9175670229405795641f",
+    measurementId: "G-BVGFKS95M6"
+};
+
+firebase.initializeApp(config);
+// Get a reference to the database service
+var db = firebase.database();
 
 $("document").ready(() => {
     var $stats = $("#statDisplay");
@@ -115,11 +131,11 @@ $("document").ready(() => {
         var bloodSugar = parseInt($("#bsInput").val());
         var carbs = parseInt($("#carbsInput").val());
         var protein = parseInt($("#proteinInput").val());
-        var lastDose = parseInt($("#lastDoseInput").val());
-        var hours = parseFloat($("#hoursInput").val());
+        var active = parseInt($("#activeInsulinInput").val());
         var activity = $("#activitySelect").val();
         if (!isNaN(bloodSugar)) {
-            var bolusObj = calculateBolus(bloodSugar, carbs, protein, lastDose, hours, activity);
+            var bolusObj = calculateBolus(bloodSugar, carbs, protein, active, activity);
+            bolus = bolusObj.total;
             var symlin = bolusObj.total * 3.47;
             if (symlin % 15 >= 7.5) {
                 symlin += 15 - symlin % 15;
@@ -133,10 +149,10 @@ $("document").ready(() => {
             $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(1) + "</h4>");
             $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
-            if (bolusObj.time >= 0){
+            if (bolusObj.time >= 0) {
                 $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.floor(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
             }
-            else{
+            else {
                 $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.ceil(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
             }
             if (bolusObj.lowFlag) {
@@ -148,7 +164,7 @@ $("document").ready(() => {
         }
     });
 
-    function calculateBolus(bs, carbs, protein, lastDose, hours, activity) {
+    function calculateBolus(bs, carbs, protein, active, activity) {
         var bolusObj = {
             bolus: 0,
             correction: 0,
@@ -160,16 +176,12 @@ $("document").ready(() => {
             time: 0
         };
         bolusObj.bolus = carbs / ic + protein / ip;
-        // time modifier accounting for longer absorbtion time observed
-        hours -= .29;
         var hyperMod = 1;
         /*if (bs >= 130) {
             hyperMod = bs * .0015 + .806151;
         }*/
         bolusObj.correction = (bs - 90) / cf * hyperMod;
-
-        bolusObj.active = lastDose * (-.01002331 * Math.pow(hours, 4) + .0966847967 * Math.pow(hours, 3) - .2579059829 * Math.pow(hours, 2) - .1248510749 * hours + 1.003651904);
-
+        bolusObj.active = active;
         bolusObj.total = (bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity;
 
         if (bolusObj.total < 0) {
@@ -180,8 +192,7 @@ $("document").ready(() => {
                 bolusObj.carbCorrection = (90 - low) / raise;
             }
         }
-        if (bs)
-        bolusObj.time = ((bs - 90) / ((bolusObj.active + bolusObj.total) * cf) + .0411111111) / .2683333333 + 0.04; 
+        bolusObj.time = ((bs - 90) / ((bolusObj.active + bolusObj.total) * cf) + .0411111111) / .2683333333 + 0.04;
         return bolusObj;
     }
 
@@ -205,40 +216,192 @@ $("document").ready(() => {
             var bedTime;
             var wakeTime;
 
-            if(pmTime === "am"){
+            if (pmTime === "am") {
                 bedTime = pmHour % 12;
             }
-            else{
-                if (pmHour == 12){
+            else {
+                if (pmHour == 12) {
                     bedTime = 12;
                 }
-                else{
+                else {
                     bedTime = pmHour + 12;
                 }
             }
-
-            if(amTime === "am"){
+            if (amTime === "am") {
                 wakeTime = amHour % 12;
             }
-            else{
-                if (amHour == 12){
+            else {
+                if (amHour == 12) {
                     wakeTime = 12;
                 }
-                else{
+                else {
                     wakeTime = amHour + 12;
                 }
             }
-
             for (var count = bedTime; count < wakeTime; count++) {
                 predictedBS = predictedBS + (rates[count] * hourly - hourly) * cf;
             }
-
             var difference = amBS - predictedBS;
             var timeDifference = Math.abs(bedTime - wakeTime);
-
             var newBasal = basal + difference / cf * 24 / timeDifference;
-
             $("#basalResult").html("<h4>" + newBasal.toFixed(0) + " units</h4>");
         }
+    });
+
+    $("#addLogButton").on("click", () => {
+        if (bolus === undefined) {
+            return;
+        }
+        var bloodSugar = parseInt($("#bsInput").val());
+        var carbs = parseInt($("#carbsInput").val());
+        var protein = parseInt($("#proteinInput").val());
+        var activity = $("#activitySelect").val();
+        var date = new Date();
+        var day = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
+        var newLog = {
+            date: day,
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            bs: bloodSugar,
+            carbs: carbs,
+            protein: protein,
+            bolus: bolus.toFixed(1),
+            activity: activity
+        };
+        db.ref("/" + day).push(newLog);
+        $("#confirm-modal-title").text("Save log");
+        $("#confirm-modal-text").text("Saved Successfully!");
+        $("#confirm-modal").modal("show");
+    });
+
+    $("#findActiveButton").on("click", () => {
+        var date = new Date();
+        var hour = date.getHours();
+        var minute = date.getMinutes();
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+        var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        if (year % 4 == 0) {
+            monthDays[1] = 29;
+        }
+        var active = 0;
+        db.ref("/" + month + "-" + day + "-" + year).once("value").then((snapshot) => {
+            snapshot.forEach((child) => {
+                if ((child.val().minutes < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
+                } else {
+                    console.log(child.val());
+                    var lastDose = child.val().bolus;
+                    var hourDiff = hour - child.val().hour;
+                    var minuteDiff = minute - child.val().minute;
+                    hourDiff += minuteDiff / 60;
+                    console.log("time difference: " + hourDiff);
+                    active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
+                    console.log("active: " + active);
+                }
+            });
+            $("#activeInsulinInput").val(active.toFixed(1));
+        });
+        if (hour >= 0 && hour < 4) { // get logs from yesterday
+            day--;
+            if (day == 0) {
+                month--;
+                if (month == -1) {
+                    month = 11
+                    year--;
+                }
+                day = monthDays[month];
+            }
+            var newDate = month + "-" + day + "-" + year;
+            db.ref("/" + newDate).once("value").then((snapshot) => {
+                snapshot.forEach((child) => {
+                    if ((child.val().minutes < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
+                    } else {
+                        console.log(child.val());
+                        var lastDose = child.val().bolus;
+                        var hourDiff = hour - (child.val().hour - 24);
+                        var minuteDiff = minute - child.val().minute;
+                        hourDiff += minuteDiff / 60;
+                        console.log("time difference: " + hourDiff);
+                        active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
+                        console.log("active: " + active);
+                    }
+                });
+                $("#activeInsulinInput").val(active.toFixed(1));
+            });
+        }
+    });
+
+    $("#averageButton").on("click", function () {
+        var num = parseInt($("#averageSelect").val());
+        var count = 0;
+        var dayCount = 0;
+        var bs = 0;
+        var hiBS = 0;
+        var lowBS = 0;
+        var bolus = 0;
+        var carbs = 0;
+        var protein = 0;
+
+        var query = db.ref().limitToLast(num);
+        query.once("value", (snapshot) => { //get list of days
+            snapshot.forEach((day) => {
+                dayCount++;
+                day.forEach((log) => {
+                    var logObj = log.val();
+                    bolus += parseFloat(logObj.bolus);
+                    bs += logObj.bs;
+                    carbs += logObj.carbs;
+                    protein += logObj.protein;
+                    if (logObj.bs > 150) {
+                        hiBS++;
+                    }
+                    else if (logObj.bs <= 70) {
+                        lowBS++;
+                    }
+                    count++;
+                });
+            });
+            bolus /= dayCount;
+            bs /= count;
+            protein /= dayCount;
+            carbs /= dayCount;
+            $("#average-modal-title").text(num + " day Average");
+            $("#average-modal-body").html("");
+            $("#average-modal-body").append("<h5>Blood Sugar: " + bs + "</h5>");
+            $("#average-modal-body").append("<h5>Total Daily Bolus: " + bolus + "</h5>");
+            $("#average-modal-body").append("<h5>Carbs: " + carbs + "</h5>");
+            $("#average-modal-body").append("<h5>Protein: " + protein + "</h5>");
+            $("#average-modal-body").append("<h5># of highs: " + hiBS + "</h5>");
+            $("#average-modal-body").append("<h5># of lows: " + lowBS + "</h5>");
+            $("#average-modal").modal("show");
+        });
+    });
+
+    $("#printButton").on("click", function () {
+        var num = parseInt($("#averageSelect").val());
+        $("#data-modal-title").text(num + " day logs");
+        $("#data-content").html("");
+        $("#data-content").append("<pre>Date        Time    BS  Bolus   Car.   Pro.   Activity</pre>");
+        var query = db.ref().limitToLast(num);
+        query.once("value", (snapshot) => { //get list of days
+            snapshot.forEach((day) => {
+                day.forEach((data) => {
+                    var log = data.val();
+                    if (log.minute == 0) {
+                        log.minute = "00";
+                    }
+                    var string = log.date + "  ";
+                    string += log.hour + ":" + log.minute + "   ";
+                    string += log.bs + "\t";
+                    string += log.bolus + "\t";
+                    string += log.carbs + "\t";
+                    string += log.protein + "\t";
+                    string += log.activity + "\n";
+                    $("#data-content").append("<pre>" + string + "</pre>");
+                });
+            });
+            $("#data-modal").modal("show");
+        });
     });
 });

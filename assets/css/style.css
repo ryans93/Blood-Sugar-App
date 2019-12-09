@@ -24,3 +24,16 @@ body{
 #basalResult {
     text-align: center;
 }
+
+.right-column {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+#averageButton {
+    margin-top: .5rem;
+}
+
+#average-modal-body {
+    padding-left: 15px;
+}

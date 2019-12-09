@@ -17,7 +17,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
+
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.2/firebase-database.js"></script>
     <title>Ryan's Blood Sugar Manager</title>
 </head>
 
@@ -33,8 +36,7 @@
             <form>
                 <div class="form-group">
                     <label for="weight">Enter body weight in lbs.</label>
-                    <input type="weight" class="form-control" id="weightInput" aria-describedby=""
-                        placeholder="">
+                    <input type="weight" class="form-control" id="weightInput" aria-describedby="" placeholder="">
                 </div>
                 <div class="form-group">
                     <label for="sensitivity">Sensitivity</label>
@@ -82,12 +84,8 @@
                             <input type="" class="form-control" id="proteinInput" value=0>
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputPassword1">Last Bolus Dose</label>
-                            <input type="" class="form-control" id="lastDoseInput" value=0>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Hours Since Bolus Taken</label>
-                            <input type="" class="form-control" id="hoursInput" value=0>
+                            <label for="exampleInputPassword1">Active Insulin</label>
+                            <input type="" class="form-control" id="activeInsulinInput" value=0>
                         </div>
                         <div class="form-group">
                             <label for="exampleFormControlSelect1">Activity Level</label>
@@ -106,8 +104,44 @@
                         <button type="button" class="btn btn-success" id="calcBolusButton">Calculate Bolus</button>
                     </form>
                 </div>
-                <div class="col-6" id="totalBolusDisplay">
+                <div class="col-6" id="">
+                    <div class="row">
+                        <div class="col-12" id="totalBolusDisplay">
 
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row right-column">
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                    <button type="button" class="btn btn-success" id="findActiveButton">Find Active
+                                        Insulin</button>
+                                </div>
+                            </div>
+                            <div class="row right-column">
+                                <div class="col-1"></div>
+                                <div class="col-5">
+                                    <button type="button" class="btn btn-success" id="addLogButton">Save</button>
+                                </div>
+                                <div class="col-5">
+                                    <button type="button" class="btn btn-success" id="printButton">Print</button>
+                                </div>
+                            </div>
+                            <div class="row right-column">
+                                <div class="col-12">
+                                    <select class="form-control" id="averageSelect">
+                                        <option value=7>7 days</option>
+                                        <option value=14>14 days</option>
+                                        <option value=30>30 days</option>
+                                        <option value=90>90 days</option>
+                                        <option value=180>180 days</option>
+                                    </select>
+                                    <button type="button" class="btn btn-success" id="averageButton">Averages</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -198,7 +232,8 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
-                                <button type="button" class="btn btn-success" id="calcBasalButton">Calculate Basal</button>
+                                <button type="button" class="btn btn-success" id="calcBasalButton">Calculate
+                                    Basal</button>
                             </div>
                             <div class="col-8" id="basalResult"></div>
                         </div>
@@ -211,7 +246,63 @@
         </div>
     </div>
 
+    <div class="modal" id="confirm-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="confirm-modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-modal-text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="average-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="average-modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="average-modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="data-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="data-modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div >
+                    <p id="data-content"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="assets/javascript/script.js"></script>
+
 </body>
 
 </html>
