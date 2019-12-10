@@ -288,7 +288,7 @@ $("document").ready(() => {
         var active = 0;
         db.ref("/" + month + "-" + day + "-" + year).once("value").then((snapshot) => {
             snapshot.forEach((child) => {
-                if ((child.val().minutes < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
+                if ((child.val().minute < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
                 } else {
                     console.log(child.val());
                     var lastDose = child.val().bolus;
@@ -315,7 +315,7 @@ $("document").ready(() => {
             var newDate = month + "-" + day + "-" + year;
             db.ref("/" + newDate).once("value").then((snapshot) => {
                 snapshot.forEach((child) => {
-                    if ((child.val().minutes < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
+                    if ((child.val().minute < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
                     } else {
                         console.log(child.val());
                         var lastDose = child.val().bolus;
