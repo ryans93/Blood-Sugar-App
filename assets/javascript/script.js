@@ -368,10 +368,10 @@ $("document").ready(() => {
             carbs /= dayCount;
             $("#average-modal-title").text(num + " day Average");
             $("#average-modal-body").html("");
-            $("#average-modal-body").append("<h5>Blood Sugar: " + bs + "</h5>");
-            $("#average-modal-body").append("<h5>Total Daily Bolus: " + bolus + "</h5>");
-            $("#average-modal-body").append("<h5>Carbs: " + carbs + "</h5>");
-            $("#average-modal-body").append("<h5>Protein: " + protein + "</h5>");
+            $("#average-modal-body").append("<h5>Blood Sugar: " + bs.toFixed(0) + "</h5>");
+            $("#average-modal-body").append("<h5>Total Daily Bolus: " + bolus.toFixed(1) + "</h5>");
+            $("#average-modal-body").append("<h5>Carbs: " + carbs.toFixed(0) + "</h5>");
+            $("#average-modal-body").append("<h5>Protein: " + protein.toFixed(0) + "</h5>");
             $("#average-modal-body").append("<h5># of highs: " + hiBS + "</h5>");
             $("#average-modal-body").append("<h5># of lows: " + lowBS + "</h5>");
             $("#average-modal").modal("show");
