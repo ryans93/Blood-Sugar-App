@@ -382,20 +382,23 @@ $("document").ready(() => {
         var num = parseInt($("#averageSelect").val());
         $("#data-modal-title").text(num + " day logs");
         $("#data-content").html("");
-        $("#data-content").append("<pre>Date        Time    BS  Bolus   Car.   Pro.   Activity</pre>");
+        $("#data-content").append("<pre>Date        Time    BS     Bolus   Car.   Pro.  Activity</pre>");
         var query = db.ref().limitToLast(num);
         query.once("value", (snapshot) => { //get list of days
             snapshot.forEach((day) => {
                 day.forEach((data) => {
                     var log = data.val();
-                    if (log.minute == 0) {
-                        log.minute = "00";
+                    if (log.minute < 10) {
+                        log.minute = "0" + log.minute;
+                    }
+                    if (log.hour < 10) {
+                        log.hour = "0" + log.hour;
                     }
                     var string = log.date + "  ";
                     string += log.hour + ":" + log.minute + "   ";
-                    string += log.bs + "\t";
-                    string += log.bolus + "\t";
-                    string += log.carbs + "\t";
+                    string += log.bs + "\t   ";
+                    string += log.bolus + "\t   ";
+                    string += log.carbs + "\t  ";
                     string += log.protein + "\t";
                     string += log.activity + "\n";
                     $("#data-content").append("<pre>" + string + "</pre>");
