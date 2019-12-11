@@ -182,7 +182,7 @@ $("document").ready(() => {
         }*/
         bolusObj.correction = (bs - 90) / cf * hyperMod;
         bolusObj.active = active;
-        bolusObj.total = (bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity;
+        bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity);
 
         if (bolusObj.total < 0) {
             var low = 90 + bolusObj.total * cf;
