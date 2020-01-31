@@ -161,6 +161,7 @@ $("document").ready(() => {
                 body.append("<h5>Consume " + bolusObj.carbCorrection.toFixed(0) + " carbs to correct.</h5>");
                 $("#lowBsModal").modal("show");
             }
+            $("#reminder-modal").modal("show");
         }
     });
 
@@ -248,7 +249,9 @@ $("document").ready(() => {
         }
     });
 
-    $("#addLogButton").on("click", () => {
+    $(document).on("click", "#addLogButton", () => {
+        console.log("here");
+
         if (bolus === undefined) {
             return;
         }
