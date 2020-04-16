@@ -147,7 +147,7 @@ $("document").ready(() => {
             $bolusDisplay.html("<h5>Bolus\t" + bolusObj.bolus.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h5>Correction\t" + bolusObj.correction.toFixed(1) + "</h5>");
             $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
-            $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(1) + "</h4>");
+            $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(0) + "</h4>");
             $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
             if (bolusObj.time >= 0) {
                 $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.floor(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
@@ -250,8 +250,6 @@ $("document").ready(() => {
     });
 
     $(document).on("click", "#addLogButton", () => {
-        console.log("here");
-
         if (bolus === undefined) {
             return;
         }
@@ -260,7 +258,14 @@ $("document").ready(() => {
         var protein = parseInt($("#proteinInput").val());
         var activity = $("#activitySelect").val();
         var date = new Date();
-        var day = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
+        var day;
+        if (date.getDate() < 10) {
+            day = date.getMonth() + 1 + "-0" + date.getDate() + "-" + date.getFullYear();
+
+        }
+        else {
+            day = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
+        }
         var newLog = {
             date: day,
             hour: date.getHours(),
@@ -300,7 +305,7 @@ $("document").ready(() => {
                     var minuteDiff = minute - child.val().minute;
                     hourDiff += minuteDiff / 60;
                     console.log("time difference: " + hourDiff);
-                    if($("#intra-check").is(":checked")){
+                    if ($("#intra-check").is(":checked")) {
                         hourDiff *= 2;
                         console.log("intra-muscular time difference: " + hourDiff);
                     }
@@ -331,7 +336,7 @@ $("document").ready(() => {
                         var minuteDiff = minute - child.val().minute;
                         hourDiff += minuteDiff / 60;
                         console.log("time difference: " + hourDiff);
-                        if($("#intra-check").is(":checked")){
+                        if ($("#intra-check").is(":checked")) {
                             hourDiff *= 2;
                             console.log("intra-muscular time difference: " + hourDiff);
                         }
