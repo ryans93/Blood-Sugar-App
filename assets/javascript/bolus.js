@@ -181,6 +181,7 @@ $("#findActiveButton").on("click", () => {
     else {
         dateString = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
     }
+    console.log(dateString);
     db.ref("/logs/" + dateString).once("value").then((snapshot) => {
         snapshot.forEach((child) => {
             if ((child.val().minute < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
@@ -213,13 +214,13 @@ $("#findActiveButton").on("click", () => {
         }
         var newDate;
         if (day < 10) {
-            newDate = month + "-" + day + "-" + year;
+            newDate = month + "-0" + day + "-" + year;
     
         }
         else {
-            newDate = month + "-0" + day + "-" + year
+            newDate = month + "-" + day + "-" + year
         }
-        
+        console.log(newDate);
         db.ref("/logs/" + newDate).once("value").then((snapshot) => {
             snapshot.forEach((child) => {
                 if ((child.val().minute < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
