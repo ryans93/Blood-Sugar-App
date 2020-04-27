@@ -84,7 +84,7 @@ function displayLogs(num) {
                 var $carbsContainer = "<div class='col-1'>" + log.carbs + "</div>";
                 var $proteinContainer = "<div class='col-1'>" + log.protein + "</div>";
                 var $activityContainer = "<div class='col-2'>" + log.activity + "</div>";
-                var $rowContainer = "<div class='row' id=" + data.key + ">" + $dateContainer + $timeContainer + $bsContainer + $bolusContainer + $carbsContainer + $proteinContainer + $activityContainer + "</div>";
+                var $rowContainer = "<div class='row reading-row' id=" + data.key + ">" + $dateContainer + $timeContainer + $bsContainer + $bolusContainer + $carbsContainer + $proteinContainer + $activityContainer + "</div>";
                 $("#logDisplay").append($rowContainer);
                 if (log.bs >= 180){
                     $("#" + data.key).css("background-color", "red");

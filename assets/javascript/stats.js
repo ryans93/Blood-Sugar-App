@@ -27,7 +27,6 @@ var db = firebase.database();
 $("document").ready(() => {
     $stats.hide();
     getFavoriteMeals();
-
     db.ref("/stats").once("value").then(function (snapshot) {
         var statsObj = snapshot.val()
         console.log(statsObj);
