@@ -3,7 +3,7 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     overflow-x: hidden;
-    height: 100vh;
+    height: 100%;
 }
 
 #banner {
@@ -19,21 +19,4 @@ body{
     padding: 10px 10px 10px 10px;
     margin: 10px 0px 10px 0px;
     text-align: center;
-}
-
-#basalResult {
-    text-align: center;
-}
-
-.right-column {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-#averageButton {
-    margin-top: .5rem;
-}
-
-#average-modal-body {
-    padding-left: 15px;
 }
