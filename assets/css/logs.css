@@ -2,3 +2,20 @@
     margin-left: -10px;
     margin-right: -10px
 }
+
+.testimonial-group > .row {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+  .testimonial-group > #logDisplay > .row{
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+.testimonial-group > #logDisplay > .row > .col-2 {
+    display: inline-block;
+    float: none;
+}
