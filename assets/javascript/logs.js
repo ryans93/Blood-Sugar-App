@@ -77,14 +77,14 @@ function displayLogs(num) {
                 if (log.hour < 10) {
                     log.hour = "0" + log.hour;
                 }
-                var $dateContainer = "<div class='col-lg-2 col-4'>" + log.date + "</div>";
-                var $timeContainer = "<div class='col-lg-2 col-4'>" + log.hour + ":" + log.minute + "</div>";
-                var $bsContainer = "<div class='col-xl-2 col-lg-3 col-6'>" + log.bs + "</div>";
-                var $bolusContainer = "<div class='col-lg-2 col-4'>" + log.bolus + "</div>";
-                var $carbsContainer = "<div class='col-xl-1 col-lg-2 col-4'>" + log.carbs + "</div>";
-                var $proteinContainer = "<div class='col-xl-1 col-lg-2 col-4'>" + log.protein + "</div>";
-                var $activityContainer = "<div class='col-lg-2 col-4'>" + log.activity + "</div>";
-                var $rowContainer = "<div class='row reading-row' id=" + data.key + ">" + $dateContainer + $timeContainer + $bsContainer + $bolusContainer + $carbsContainer + $proteinContainer + $activityContainer + "</div>";
+                var $dateContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.date + "</div>";
+                var $timeContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.hour + ":" + log.minute + "</div>";
+                var $bsContainer = "<div class='col-xl-2 col-lg-3 col-6 log-Col'>" + log.bs + "</div>";
+                var $bolusContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.bolus + "</div>";
+                var $carbsContainer = "<div class='col-xl-1 col-lg-2 col-4 log-Col'>" + log.carbs + "</div>";
+                var $proteinContainer = "<div class='col-xl-1 col-lg-2 col-4 log-Col'>" + log.protein + "</div>";
+                var $activityContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.activity + "</div>";
+                var $rowContainer = "<div class='row' id=" + data.key + ">" + $dateContainer + $timeContainer + $bsContainer + $bolusContainer + $carbsContainer + $proteinContainer + $activityContainer + "</div>";
                 $("#logDisplay").append($rowContainer);
                 if (log.bs >= 180){
                     $("#" + data.key).css("background-color", "red");

@@ -53,8 +53,6 @@ $("document").ready(() => {
 });
 
 function displayStats() {
-    //$("body").css("height", "100%"); 
-
     var basal = parseFloat(stats.weight * 0.453592 * stats.sensCo / 2);
     var lbm = 182.6 * 0.453592;
     var bmr = (370 + (21.6 * lbm) - lbm) * 1.1;
@@ -89,8 +87,8 @@ function displayStats() {
     $stats.append("<h5>" + (100 * totalBolus / tdi).toFixed(1) + "% bolus\t" + (100 * basal / tdi).toFixed(1) + "% basal</h5>");
 }
 
-function getFavoriteMeals(){
-    db.ref("/meals").orderByChild("favorite").equalTo(true).on("value", function (snapshot){
+function getFavoriteMeals() {
+    db.ref("/meals").orderByChild("favorite").equalTo(true).on("value", function (snapshot) {
         snapshot.forEach((data) => {
             console.log(data.val());
             meals.push(data.val());

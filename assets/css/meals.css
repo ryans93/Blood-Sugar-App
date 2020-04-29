@@ -1,3 +1,20 @@
 .mealRow {
     margin-bottom: 10px;
 }
+
+.testimonial-group > .row {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+  .testimonial-group > #mealDisplay > .row{
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+.testimonial-group > #mealsDisplay > .row > .meal-Col {
+    display: inline-block;
+    float: none;
+}

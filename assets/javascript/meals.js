@@ -49,20 +49,20 @@ function display(snapshot){
         console.log(data.key)
         var meal = data.val();
         console.log(meal);
-        var $nameContainer = "<div class='col-1' id=" + data.key + "-name>" + meal.name + "</div>";
-        var $descriptionContainer = "<div class='col-6' id=" + data.key + "-description>" + meal.description + "</div>";
-        var $carbsContainer = "<div class='col-1' id=" + data.key + "-carbs>" + meal.carbs + "</div>";
-        var $proteinContainer = "<div class='col-1' id=" + data.key + "-protein>" + meal.protein + "</div>";
+        var $nameContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-name>" + meal.name + "</div>";
+        var $descriptionContainer = "<div class='col-xl-5 col-lg-6 col-12 meal-Col' id=" + data.key + "-description>" + meal.description + "</div>";
+        var $carbsContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-carbs>" + meal.carbs + "</div>";
+        var $proteinContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-protein>" + meal.protein + "</div>";
         var $favoriteContainer;
         if (meal.favorite){
-            $favoriteContainer = "<div class='col-1'><input type='checkbox' class='form-check-input' id=" + data.key + "-favorite checked></div>";
+            $favoriteContainer = "<div class='col-xl-2 col-lg-2 col-4 meal-Col'><input type='checkbox' class='form-check-input' id=" + data.key + "-favorite checked></div>";
         }
         else{
-            $favoriteContainer = "<div class='col-1'><input type='checkbox' class='form-check-input' id=" + data.key + "-favorite></div>";
+            $favoriteContainer = "<div class='col-xl-2 col-lg-2 col-4 meal-Col'><input type='checkbox' class='form-check-input' id=" + data.key + "-favorite></div>";
         }
         var editButton = "<button type='button' class='btn btn-primary' id='editMealButton' data=" + data.key + ">Edit</button>";
         var deleteButton = "<button type='button' class='btn btn-danger' style='margin-left: 30px' id='deleteMealButton' data=" + data.key + ">X</button>"
-        var $buttonContainer = "<div class='col-2'>" + editButton + deleteButton + "</div>"
+        var $buttonContainer = "<div class='col-xl-2 col-lg-2 col-4 meal-Col'>" + editButton + deleteButton + "</div>"
         var $rowContainer = "<div class='row mealRow'>" + $nameContainer + $descriptionContainer + $carbsContainer + $proteinContainer + $favoriteContainer + $buttonContainer + "</div>";
         $("#mealDisplay").append($rowContainer);
     });
