@@ -194,6 +194,9 @@ $("#findActiveButton").on("click", () => {
                 console.log("time difference: " + hourDiff);
                 if ($("#intra-check").is(":checked")) {
                     hourDiff *= 2;
+                    if(hourDiff > 4){
+                        hourDiff = 0;
+                    }
                     console.log("intra-muscular time difference: " + hourDiff);
                 }
                 active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);

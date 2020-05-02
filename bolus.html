@@ -25,6 +25,7 @@
 </head>
 
 <body>
+    <!--Nav bar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <a class="navbar-brand">Blood Sugar App</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -56,16 +57,19 @@
             </ul>
         </div>
     </nav>
+    <!--Banner-->
     <div class="row">
         <div class="col-lg-3 col-1"></div>
         <div class="col-lg-6 col-10" id="banner"></div>
     </div>
 
+    <!--Main display-->
     <div class="row">
         <div class="col-lg-3 col-1"></div>
         <div class="col-lg-6 col-10 display" id="bolusDisplay">
             <h3>Bolus Calculator</h3>
             <div class="row">
+                <!--column for log entry form-->
                 <div class="col-sm-6 col-12">
                     <form>
                         <div class="form-group">
@@ -107,10 +111,11 @@
                         <button type="button" class="btn btn-success" id="calcBolusButton">Calculate Bolus</button>
                     </form>
                 </div>
-                <div class="col-sm-6 col-12" id="">
+                <!--column for bolus data display and other options-->
+                <div class="col-sm-6 col-12">
                     <div class="row">
+                        <!--bolus data display-->
                         <div class="col-12" id="totalBolusDisplay">
-
                         </div>
                     </div>
                     <div class="row">
@@ -127,7 +132,6 @@
                                         </div>
                                         <h6 style="padding-top: 5px; padding-left: 5px;">Intra-muscular</h6>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-12">
                                             <button type="button" class="btn btn-success" id="findActiveButton">Find
@@ -136,23 +140,21 @@
                                         </div>
                                     </div>
                                     <div class="row">
-
                                         <div class="col-12">
                                             <button type="button" class="btn btn-success" style="margin-left: 20px"
                                                 id="addLogButton">Save</button>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
+    <!--Modal for low blood sugar data-->
     <div class="modal" id="lowBsModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -170,6 +172,7 @@
         </div>
     </div>
 
+    <!--modal for reminder to save after bolus calculation-->
     <div class="modal" id="reminder-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -189,6 +192,7 @@
         </div>
     </div>
 
+    <!--confirmation modal-->
     <div class="modal" id="confirm-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

@@ -26,6 +26,7 @@
 </head>
 
 <body>
+    <!--Nav Bar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <a class="navbar-brand">Blood Sugar App</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -57,11 +58,13 @@
             </ul>
         </div>
     </nav>
+    <!--Banner-->
     <div class="row">
         <div class="col-lg-3 col-1"></div>
         <div class="col-lg-6 col-10" id="banner"></div>
     </div>
 
+    <!--Main display-->
     <div class="row">
         <div class="col-1"></div>
         <div class="col-10 display">
@@ -71,6 +74,7 @@
                     <div class="row" style="margin-bottom:15px">
                         <div class="col-lg-5 col-2"></div>
                         <div class="col-lg-2 col-5">
+                            <!--Day selection dropdown-->
                             <select class="form-control" id="averageSelect">
                                 <option value=7>7 days</option>
                                 <option value=14>14 days</option>
@@ -84,7 +88,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
+            <!--Scrollable Container for header and data columns-->
             <div class="container testimonial-group">
                 <div class="row">
                     <div class="col-lg-2 col-4">
@@ -109,11 +114,13 @@
                         <h3>Activity</h3>
                     </div>
                 </div>
+                <!--Data Rows-->
                 <div id="logDisplay"></div>
             </div>
         </div>
     </div>
 
+    <!--Averages modal-->
     <div class="modal" id="average-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
