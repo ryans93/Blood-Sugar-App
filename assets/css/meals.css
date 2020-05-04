@@ -18,3 +18,7 @@
     display: inline-block;
     float: none;
 }
+
+#addMealRow {
+    margin-bottom: 10px;
+}
