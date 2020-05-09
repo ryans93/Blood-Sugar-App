@@ -1,3 +1,4 @@
+// config firebase
 var config = {
     apiKey: "AIzaSyBzsI73lH5-qLrt7s4Br439ZQWeASwcWPA",
     authDomain: "blood-sugar-app.firebaseapp.com",
@@ -17,10 +18,12 @@ $("document").ready(() => {
     displayMeals();
 });
 
+// show add meal modal
 $("#addMealButton").on("click", function () {
     $("#addMealModal").modal("show");
 });
 
+// use form data to add new meal to database and reload page
 $("#saveMealButton").on("click", function () {
     var newMeal = {
         name: $("#name").val(),
@@ -35,6 +38,7 @@ $("#saveMealButton").on("click", function () {
     });
 });
 
+// query database for meals, show favorites first
 function displayMeals() {
     db.ref("/meals").orderByChild("favorite").equalTo(true).once("value", (snapshot) => {
         display(snapshot);
@@ -44,6 +48,7 @@ function displayMeals() {
     });
 };
 
+// loop through meal data and append html to page
 function display(snapshot){
     snapshot.forEach((data) => {
         console.log(data.key)
@@ -68,6 +73,7 @@ function display(snapshot){
     });
 }
 
+// delete meal and reload page
 $(document).on("click", "#deleteMealButton", function(){
     console.log($(this).attr("data"));
     db.ref("/meals/" + $(this).attr("data")).remove().then(function(){
@@ -75,6 +81,7 @@ $(document).on("click", "#deleteMealButton", function(){
     });
 });
 
+// fill out form using existing values on edit meal modal and show it
 $(document).on("click", "#editMealButton", function(){
     console.log($(this).attr("data"));
     $("#edit-name").val($("#" + $(this).attr("data") + "-name").text());
@@ -88,6 +95,7 @@ $(document).on("click", "#editMealButton", function(){
     $("#editMealModal").modal("show");
 });
 
+// use form data to update selected meal and reload page
 $("#saveEditedMealButton").on("click", function () {
     var newMeal = {
         name: $("#edit-name").val(),

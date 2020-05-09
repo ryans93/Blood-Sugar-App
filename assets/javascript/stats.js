@@ -9,6 +9,7 @@ var stats = {
 var meals = [];
 var $stats = $("#statDisplay");
 
+// config firebase
 var config = {
     apiKey: "AIzaSyBzsI73lH5-qLrt7s4Br439ZQWeASwcWPA",
     authDomain: "blood-sugar-app.firebaseapp.com",
@@ -30,6 +31,7 @@ $("document").ready(() => {
     db.ref("/stats").once("value").then(function (snapshot) {
         var statsObj = snapshot.val()
         console.log(statsObj);
+        // if stats object exists in database, copy data into stats object
         if (statsObj !== null) {
             stats = statsObj;
             $("#weightInput").val(stats.weight);
@@ -38,6 +40,7 @@ $("document").ready(() => {
         }
     });
 
+    // use weight and sensitivity input to calculate stats
     $("#calcStats").on("click", function () {
         stats.weight = parseFloat($("#weightInput").val());
         stats.sensCo = parseFloat($("#sensitivityInput").val());
@@ -46,12 +49,14 @@ $("document").ready(() => {
         stats.raise = 770.54574 * Math.pow(stats.weight, -1.000424505);
         stats.cf = parseFloat(stats.raise * stats.ic);
 
+        // save stats to database and then display stats
         db.ref("/stats").set(stats).then(() => {
             displayStats();
         });
     });
 });
 
+// calculates stats and appends data to html
 function displayStats() {
     var basal = parseFloat(stats.weight * 0.453592 * stats.sensCo / 2);
     var lbm = 182.6 * 0.453592;
@@ -75,6 +80,7 @@ function displayStats() {
     $stats.append("<h3>Meals</h3>");
     $stats.show();
     var totalBolus = 0
+    // show data for favorite meals in meals array
     for (var i = 0; i < meals.length; i++) {
         var bolus = meals[i].carbs / stats.ic + meals[i].protein / stats.ip;
         totalBolus += bolus;
@@ -87,6 +93,7 @@ function displayStats() {
     $stats.append("<h5>" + (100 * totalBolus / tdi).toFixed(1) + "% bolus\t" + (100 * basal / tdi).toFixed(1) + "% basal</h5>");
 }
 
+// gets meals selected as favorite from database and pushes to meals array
 function getFavoriteMeals() {
     db.ref("/meals").orderByChild("favorite").equalTo(true).on("value", function (snapshot) {
         snapshot.forEach((data) => {

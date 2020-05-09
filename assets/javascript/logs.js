@@ -1,3 +1,4 @@
+// config firebase
 var config = {
     apiKey: "AIzaSyBzsI73lH5-qLrt7s4Br439ZQWeASwcWPA",
     authDomain: "blood-sugar-app.firebaseapp.com",
@@ -14,9 +15,10 @@ firebase.initializeApp(config);
 var db = firebase.database();
 
 $("document").ready(() => {
-    //$("body").css("height", "100%");
     displayLogs(7);
 });
+
+// display averages
 $("#averageButton").on("click", function () {
     var num = parseInt($("#averageSelect").val());
     var count = 0;
@@ -28,22 +30,29 @@ $("#averageButton").on("click", function () {
     var carbs = 0;
     var protein = 0;
 
+    // get logs for past number of days equal to value selected
     var query = db.ref("/logs").limitToLast(num);
-    query.once("value", (snapshot) => { //get list of days
-        snapshot.forEach((day) => {
+    // get list of days
+    query.once("value", (snapshot) => { 
+        // loop through each day
+        snapshot.forEach((day) => { 
+            // count number of days
             dayCount++;
+            // loop through logs of each day
             day.forEach((log) => {
                 var logObj = log.val();
                 bolus += parseFloat(logObj.bolus);
                 bs += logObj.bs;
                 carbs += logObj.carbs;
                 protein += logObj.protein;
+                // count high and low blood sugar readings
                 if (logObj.bs > 180) {
                     hiBS++;
                 }
                 else if (logObj.bs < 70) {
                     lowBS++;
                 }
+                // count number of readings
                 count++;
             });
         });
@@ -51,6 +60,7 @@ $("#averageButton").on("click", function () {
         bs /= count;
         protein /= dayCount;
         carbs /= dayCount;
+        // append html to modal and show modal
         $("#average-modal-title").text(num + " day Average");
         $("#average-modal-body").html("");
         $("#average-modal-body").append("<h5>Blood Sugar: " + bs.toFixed(0) + "</h5>");
@@ -63,20 +73,25 @@ $("#averageButton").on("click", function () {
     });
 });
 
+// display logs for set number of days
 function displayLogs(num) {
-    //var num = parseInt($("#averageSelect").val());
     $("#logDisplay").html("");
+    // query db for logs within set number of days
     var query = db.ref("/logs").limitToLast(num);
-    query.once("value", (snapshot) => { //get list of days
+    query.once("value", (snapshot) => { 
+        //loop through each day
         snapshot.forEach((day) => {
+            // loop through all logs in day
             day.forEach((data) => {
                 var log = data.val();
+                // display fix for time
                 if (log.minute < 10) {
                     log.minute = "0" + log.minute;
                 }
                 if (log.hour < 10) {
                     log.hour = "0" + log.hour;
                 }
+                // append data to html
                 var $dateContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.date + "</div>";
                 var $timeContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.hour + ":" + log.minute + "</div>";
                 var $bsContainer = "<div class='col-xl-2 col-lg-3 col-6 log-Col'>" + log.bs + "</div>";
@@ -86,6 +101,7 @@ function displayLogs(num) {
                 var $activityContainer = "<div class='col-lg-2 col-4 log-Col'>" + log.activity + "</div>";
                 var $rowContainer = "<div class='row' id=" + data.key + ">" + $dateContainer + $timeContainer + $bsContainer + $bolusContainer + $carbsContainer + $proteinContainer + $activityContainer + "</div>";
                 $("#logDisplay").append($rowContainer);
+                // flag high and low blood sugars
                 if (log.bs >= 180){
                     $("#" + data.key).css("background-color", "red");
                 }
@@ -94,10 +110,10 @@ function displayLogs(num) {
                 }
             });
         });
-        $("#data-modal").modal("show");
     });
 }
 
+// calls displayLogs() for number of days selected
 $("#averageSelect").change(() => {
     var num = parseInt($("#averageSelect").val());
     console.log(num);

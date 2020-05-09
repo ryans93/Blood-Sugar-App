@@ -1,3 +1,4 @@
+// config firebase
 var config = {
     apiKey: "AIzaSyBzsI73lH5-qLrt7s4Br439ZQWeASwcWPA",
     authDomain: "blood-sugar-app.firebaseapp.com",
@@ -22,11 +23,7 @@ var meals = [
 var stats;
 
 $("document").ready(() => {
-    //$("body").css("height", "100%"); 
-    init();
-});
-
-function init() {
+    // query meals from database and push into meals array, query favorites first
     db.ref("/meals").orderByChild("favorite").equalTo(true).once("value", (snapshot) => {
         snapshot.forEach((data) => {
             meals.push(data.val());
@@ -39,13 +36,15 @@ function init() {
                 var option = "<option>" + data2.val().name + "</option>";
                 $("#mealSelect").append(option);
             });
+            // copy stats data from database into stats
             db.ref("/stats").once("value", (statsSnapshot) =>{
                 stats = statsSnapshot.val();
             });
         });
     });
-};
+});
 
+// auto-populate carbs and protein when meal selected
 $("#mealSelect").change(() => {
     var meal = $("#mealSelect").val();
     for (var i = 0; i < meals.length; i++) {
@@ -57,15 +56,18 @@ $("#mealSelect").change(() => {
     }
 });
 
+// get form data and call calculateBolus(), append data to html
 $("#calcBolusButton").click(() => {
     var bloodSugar = parseInt($("#bsInput").val());
     var carbs = parseInt($("#carbsInput").val());
     var protein = parseInt($("#proteinInput").val());
     var active = parseInt($("#activeInsulinInput").val());
     var activity = $("#activitySelect").val();
+    // input validation
     if (!isNaN(bloodSugar)) {
         var bolusObj = calculateBolus(bloodSugar, carbs, protein, active, activity);
         bolus = bolusObj.total;
+        // calculate symlin dosage
         var symlin = bolusObj.total * 3.47;
         if (symlin % 15 >= 7.5) {
             symlin += 15 - symlin % 15;
@@ -73,6 +75,7 @@ $("#calcBolusButton").click(() => {
         else {
             symlin -= symlin % 15;
         }
+        // append html
         var $bolusDisplay = $("#totalBolusDisplay");
         $bolusDisplay.html("<h5>Bolus\t" + bolusObj.bolus.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h5>Correction\t" + bolusObj.correction.toFixed(1) + "</h5>");
@@ -85,16 +88,19 @@ $("#calcBolusButton").click(() => {
         else {
             $bolusDisplay.append("<h5>Dosage Time</h5><h5>" + Math.ceil(bolusObj.time) + " hours</h5><h5>" + ((bolusObj.time % 1) * 60).toFixed(0) + " minutes</h5>");
         }
+        // if low blood sugar predicted, show low blood sugar modal
         if (bolusObj.lowFlag) {
             var body = $("#lowBsModalBody");
             body.html("<h5>Low blood sugar of " + bolusObj.lowBs.toFixed(0) + " predicted.</h5>");
             body.append("<h5>Consume " + bolusObj.carbCorrection.toFixed(0) + " carbs to correct.</h5>");
             $("#lowBsModal").modal("show");
         }
+        // show reminder modal 
         $("#reminder-modal").modal("show");
     }
 });
 
+// calculates bolus dosage and meal timing
 function calculateBolus(bs, carbs, protein, active, activity) {
     var bolusObj = {
         bolus: 0,
@@ -107,6 +113,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
         time: 0
     };
     bolusObj.bolus = carbs / stats.ic + protein / stats.ip;
+    // modifier accounting for dehydration due to high blood sugar
     var hyperMod = 1;
     /*if (bs >= 130) {
         hyperMod = bs * .0015 + .806151;
@@ -115,6 +122,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     bolusObj.active = active;
     bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity);
 
+    // check if lowblood sugar is predicted
     if (bolusObj.total < 0) {
         var low = 90 + bolusObj.total * stats.cf;
         if (low < 80) {
@@ -123,10 +131,12 @@ function calculateBolus(bs, carbs, protein, active, activity) {
             bolusObj.carbCorrection = (90 - low) / stats.raise;
         }
     }
+    // calculate dosage time
     bolusObj.time = ((bs - 90) / ((bolusObj.active + bolusObj.total) * stats.cf) + .0411111111) / .2683333333 + 0.04;
     return bolusObj;
 }
 
+// take form data and add log into database
 $(document).on("click", "#addLogButton", () => {
     if (bolus === undefined) {
         return;
@@ -137,6 +147,7 @@ $(document).on("click", "#addLogButton", () => {
     var activity = $("#activitySelect").val();
     var date = new Date();
     var day;
+    // date display fix
     if (date.getDate() < 10) {
         day = date.getMonth() + 1 + "-0" + date.getDate() + "-" + date.getFullYear();
 
@@ -155,11 +166,13 @@ $(document).on("click", "#addLogButton", () => {
         activity: activity
     };
     db.ref("/logs/" + day).push(newLog);
+    // show confirmation modal
     $("#confirm-modal-title").text("Save log");
     $("#confirm-modal-text").text("Saved Successfully!");
     $("#confirm-modal").modal("show");
 });
 
+// search database for all doses within 4 hours to find active insulin
 $("#findActiveButton").on("click", () => {
     console.log($("#intra-check").is(":checked"));
     var date = new Date();
@@ -169,11 +182,13 @@ $("#findActiveButton").on("click", () => {
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
     var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // leap year
     if (year % 4 == 0) {
         monthDays[1] = 29;
     }
     var active = 0;
     var dateString;
+    // date fix
     if (date.getDate() < 10) {
         dateString = date.getMonth() + 1 + "-0" + date.getDate() + "-" + date.getFullYear();
 
@@ -182,8 +197,11 @@ $("#findActiveButton").on("click", () => {
         dateString = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
     }
     console.log(dateString);
+    // check current day
     db.ref("/logs/" + dateString).once("value").then((snapshot) => {
+        // loop through each reading
         snapshot.forEach((child) => {
+            // check if reading is older than 4 hours
             if ((child.val().minute < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
             } else {
                 console.log(child.val());
@@ -192,20 +210,25 @@ $("#findActiveButton").on("click", () => {
                 var minuteDiff = minute - child.val().minute;
                 hourDiff += minuteDiff / 60;
                 console.log("time difference: " + hourDiff);
+                // double time difference for intra-muscular injection
                 if ($("#intra-check").is(":checked")) {
                     hourDiff *= 2;
+                    // prevent hour difference from exceeding 4
                     if(hourDiff > 4){
-                        hourDiff = 0;
+                        hourDiff = 4;
                     }
                     console.log("intra-muscular time difference: " + hourDiff);
                 }
+                // calculate active insulin
                 active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                 console.log("active: " + active);
             }
         });
         $("#activeInsulinInput").val(active.toFixed(1));
     });
-    if (hour >= 0 && hour < 4) { // get logs from yesterday
+    // get logs from yesterday if between 12-4am
+    if (hour >= 0 && hour < 4) { 
+        // get formate for previous day's date
         day--;
         if (day == 0) {
             month--;
@@ -216,6 +239,7 @@ $("#findActiveButton").on("click", () => {
             day = monthDays[month];
         }
         var newDate;
+        // date fix
         if (day < 10) {
             newDate = month + "-0" + day + "-" + year;
     
@@ -224,8 +248,11 @@ $("#findActiveButton").on("click", () => {
             newDate = month + "-" + day + "-" + year
         }
         console.log(newDate);
+        // query logs from previous day
         db.ref("/logs/" + newDate).once("value").then((snapshot) => {
+            // loop through each log
             snapshot.forEach((child) => {
+                // check if log is older than 4 hours
                 if ((child.val().minute < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
                 } else {
                     console.log(child.val());
@@ -234,13 +261,16 @@ $("#findActiveButton").on("click", () => {
                     var minuteDiff = minute - child.val().minute;
                     hourDiff += minuteDiff / 60;
                     console.log("time difference: " + hourDiff);
+                    // double time difference for intra-muscular injection
                     if ($("#intra-check").is(":checked")) {
                         hourDiff *= 2;
+                        // prevent hour difference from exceeding 4
                         if (hourDiff > 4){
                             hourDiff = 4;
                         }
                         console.log("intra-muscular time difference: " + hourDiff);
                     }
+                    // calculate active insulin
                     active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                     console.log(lastDose);
                     console.log("active: " + active);
