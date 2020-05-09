@@ -81,6 +81,13 @@ This branch holds a single object containing key numbers calculated on the home 
 
 ![db-2](/assets/images/screenshots/db-2.png)
 
+### Technologies Used
+
+- HTML5
+- Bootstrap
+- jQuery
+- Firebase Realtime Database
+
 ## Installation
 
 No software is needed for this app besides a compatible internet browser.
