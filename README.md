@@ -4,6 +4,8 @@
 
 An application aimed to assist type-1 diabetics in controlling their blood sugar. The app can calculate key stats such as insulin:carbohydrate ratio, correction factor, and total daily insulin dosage. Users can also use the app to calculate insulin dosages at meal times, add and edit custom meals, and display logs and averages.
 
+[Live Demo](https://ryans93.github.io/Blood-Sugar-App/)
+
 ### Home Page
 
 This page takes the users weight and sensitivity coefficient to calculate key numbers and stats used in other sections of the app. 
