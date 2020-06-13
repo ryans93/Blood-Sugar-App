@@ -61,7 +61,7 @@ $("#calcBolusButton").click(() => {
     var bloodSugar = parseInt($("#bsInput").val());
     var carbs = parseInt($("#carbsInput").val());
     var protein = parseInt($("#proteinInput").val());
-    var active = parseInt($("#activeInsulinInput").val());
+    var active = parseFloat($("#activeInsulinInput").val());
     var activity = $("#activitySelect").val();
     // input validation
     if (!isNaN(bloodSugar)) {
