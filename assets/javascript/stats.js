@@ -66,7 +66,6 @@ function displayStats() {
     var estimatedSensco1 = estimatedBasal1 * 2 / (stats.weight * 0.453592);
     var estimatedBasal2 = bmr * .65 / 4 / stats.ic;
     var estimatedSensco2 = estimatedBasal2 * 2 / (stats.weight * 0.453592);
-    var offset = 1.62 * basal / 24;
 
     var $stats = $("#statDisplay");
     $stats.html("<h3>Stats</h3>");
@@ -76,7 +75,6 @@ function displayStats() {
     $stats.append("<h5>Basal\t" + basal.toFixed(1) + "</h5>");
     $stats.append("<h5>Estimated Basal\t" + estimatedBasal1.toFixed(1) + "-" + estimatedBasal2.toFixed(1) + "</h5>");
     $stats.append("<h5>Estimated Sensitivity\t" + estimatedSensco1.toFixed(2) + "-" + estimatedSensco2.toFixed(2) + "</h5>");
-    $stats.append("<h5>8am/2pm offset\t" + offset.toFixed(1) + "</h5>");
     $stats.append("<h3>Meals</h3>");
     $stats.show();
     var totalBolus = 0

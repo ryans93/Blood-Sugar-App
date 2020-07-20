@@ -37,7 +37,7 @@ $("document").ready(() => {
                 $("#mealSelect").append(option);
             });
             // copy stats data from database into stats
-            db.ref("/stats").once("value", (statsSnapshot) =>{
+            db.ref("/stats").once("value", (statsSnapshot) => {
                 stats = statsSnapshot.val();
             });
         });
@@ -80,6 +80,7 @@ $("#calcBolusButton").click(() => {
         $bolusDisplay.html("<h5>Bolus\t" + bolusObj.bolus.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h5>Correction\t" + bolusObj.correction.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
+        $bolusDisplay.append("<h5>Basal Offset\t" + bolusObj.basalOffset.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(0) + "</h4>");
         $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
         if (bolusObj.time >= 0) {
@@ -106,6 +107,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
         bolus: 0,
         correction: 0,
         active: 0,
+        basalOffset: 0,
         total: 0,
         lowFlag: false,
         lowBs: 0,
@@ -120,7 +122,27 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     }*/
     bolusObj.correction = (bs - 90) / stats.cf * hyperMod;
     bolusObj.active = active;
-    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity);
+
+    // calc basal offset 
+    //           12am    1       2       3       4       5       6       7       8       9       10      11      12     1    2       3       4      5    6       7       8    9      10      11   12am   1       2 
+    var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452, .9916, .9916, 1.0846];
+    var time = new Date();
+    var hour = time.getHours();
+    if (time.getMinutes() > 30){
+        hour++;
+    }
+    console.log("current hour: " + hour);
+    var offset = 0;
+    for (let i = 0; i < 4; i++){
+        offset += rates[hour] - 1;
+        hour++;
+    }
+    console.log("hourly offset: " + offset);
+    bolusObj.basalOffset = parseFloat(stats.weight * 0.453592 * stats.sensCo / 2) / 24 * offset;
+    console.log("basal offset: " + bolusObj.basalOffset.toFixed(4));
+
+    // calc total bolus
+    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active + bolusObj.basalOffset) * activity);
 
     // check if lowblood sugar is predicted
     if (bolusObj.total < 0) {
@@ -214,7 +236,7 @@ $("#findActiveButton").on("click", () => {
                 if ($("#intra-check").is(":checked")) {
                     hourDiff *= 2;
                     // prevent hour difference from exceeding 4
-                    if(hourDiff > 4){
+                    if (hourDiff > 4) {
                         hourDiff = 4;
                     }
                     console.log("intra-muscular time difference: " + hourDiff);
@@ -227,7 +249,7 @@ $("#findActiveButton").on("click", () => {
         $("#activeInsulinInput").val(active.toFixed(1));
     });
     // get logs from yesterday if between 12-4am
-    if (hour >= 0 && hour < 4) { 
+    if (hour >= 0 && hour < 4) {
         // get formate for previous day's date
         day--;
         if (day == 0) {
@@ -242,7 +264,7 @@ $("#findActiveButton").on("click", () => {
         // date fix
         if (day < 10) {
             newDate = month + "-0" + day + "-" + year;
-    
+
         }
         else {
             newDate = month + "-" + day + "-" + year
@@ -265,7 +287,7 @@ $("#findActiveButton").on("click", () => {
                     if ($("#intra-check").is(":checked")) {
                         hourDiff *= 2;
                         // prevent hour difference from exceeding 4
-                        if (hourDiff > 4){
+                        if (hourDiff > 4) {
                             hourDiff = 4;
                         }
                         console.log("intra-muscular time difference: " + hourDiff);
