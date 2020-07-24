@@ -32,13 +32,11 @@ $("#calcBasalButton").click(() => {
     var amBS = parseInt($("#amBSInput").val());
     var amHour = parseInt($("#amHourInput").val());
     var amTime = $("#amTimeInput").val();
-                //12    1       2       3       4       5       6       7       8       9       10      11      12     1    2       3       4      5    6       7       8    9      10      11      
+    //              12    1       2       3       4       5       6       7       8       9       10      11      12     1    2       3       4      5    6       7       8    9      10      11      
     var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452];
 
     // validate form data
     if (!isNaN(pmBS) && !isNaN(amBS)) {
-        var hourly = basal / 24;
-        var predictedBS = pmBS;
         var bedTime;
         var wakeTime;
 
@@ -66,18 +64,20 @@ $("#calcBasalButton").click(() => {
             }
         }
         var timeDifference = Math.abs(bedTime - wakeTime);
-       
+        console.log("Time Diff: " + timeDifference)
+
+        var rateDiff = 0;
         // use rates array to calculate expected blood sugar for each hour until am reading time is reached
         for (var count = 0; count < timeDifference; count++) {
-            predictedBS = predictedBS + (rates[bedTime] * hourly - hourly) * stats.cf;
+            console.log(bedTime);
+            rateDiff += rates[bedTime];
             bedTime++;
-            console.log(predictedBS);
         }
-        var difference = amBS - predictedBS;
-
+        var predictedBS = pmBS + (rateDiff - timeDifference) * stats.cf;
+        console.log("Predicted AM Blood Sugar: " + predictedBS.toFixed(4));
         // calculate new suggested bolus amount
-        newBasal = basal + difference / stats.cf * 24 / timeDifference;
-        
+        newBasal = basal + (amBS - predictedBS) / stats.cf * 24 / timeDifference;
+
         // append result and update button to html
         $("#basalResult").html("<h4>Suggested Basal: " + newBasal.toFixed(0) + " units</h4>");
         var button = "<button type'button' class='btn btn-success' id='updateStatsButton'>Update Stats</button>";

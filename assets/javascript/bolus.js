@@ -117,9 +117,9 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     bolusObj.bolus = carbs / stats.ic + protein / stats.ip;
     // modifier accounting for dehydration due to high blood sugar
     var hyperMod = 1;
-    /*if (bs >= 130) {
+    if (bs >= 130) {
         hyperMod = bs * .0015 + .806151;
-    }*/
+    }
     bolusObj.correction = (bs - 90) / stats.cf * hyperMod;
     bolusObj.active = active;
 
@@ -128,12 +128,12 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452, .9916, .9916, 1.0846];
     var time = new Date();
     var hour = time.getHours();
-    if (time.getMinutes() > 30){
+    if (time.getMinutes() > 30) {
         hour++;
     }
     console.log("current hour: " + hour);
     var offset = 0;
-    for (let i = 0; i < 4; i++){
+    for (let i = 0; i < 4; i++) {
         offset += rates[hour] - 1;
         hour++;
     }
@@ -142,7 +142,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     console.log("basal offset: " + bolusObj.basalOffset.toFixed(4));
 
     // calc total bolus
-    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active + bolusObj.basalOffset) * activity);
+    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity + bolusObj.basalOffset);
 
     // check if lowblood sugar is predicted
     if (bolusObj.total < 0) {
@@ -244,6 +244,8 @@ $("#findActiveButton").on("click", () => {
                 // calculate active insulin
                 active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                 console.log("active: " + active);
+                var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
+                console.log("test active: " + active2);
             }
         });
         $("#activeInsulinInput").val(active.toFixed(1));
@@ -296,6 +298,8 @@ $("#findActiveButton").on("click", () => {
                     active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                     console.log(lastDose);
                     console.log("active: " + active);
+                    var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
+                    console.log("test active: " + active2);
                 }
             });
             $("#activeInsulinInput").val(active.toFixed(1));
