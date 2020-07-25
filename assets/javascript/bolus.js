@@ -244,8 +244,15 @@ $("#findActiveButton").on("click", () => {
                 // calculate active insulin
                 active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                 console.log("active: " + active);
+
                 var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
                 console.log("test active: " + active2);
+
+                var active6 = lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
+                console.log("test active (6 hour): " + active6);
+
+                var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
+                console.log("test active: " + fiasp);
             }
         });
         $("#activeInsulinInput").val(active.toFixed(1));
@@ -298,8 +305,15 @@ $("#findActiveButton").on("click", () => {
                     active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
                     console.log(lastDose);
                     console.log("active: " + active);
+
                     var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
                     console.log("test active: " + active2);
+
+                    var active6 = lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
+                    console.log("test active (6 hour): " + active6);
+
+                    var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
+                    console.log("test active: " + fiasp);
                 }
             });
             $("#activeInsulinInput").val(active.toFixed(1));
