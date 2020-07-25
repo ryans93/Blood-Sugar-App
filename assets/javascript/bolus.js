@@ -252,7 +252,7 @@ $("#findActiveButton").on("click", () => {
                 console.log("test active (6 hour): " + active6);
 
                 var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                console.log("test active: " + fiasp);
+                console.log("fiasp active: " + fiasp);
             }
         });
         $("#activeInsulinInput").val(active.toFixed(1));
@@ -313,7 +313,7 @@ $("#findActiveButton").on("click", () => {
                     console.log("test active (6 hour): " + active6);
 
                     var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                    console.log("test active: " + fiasp);
+                    console.log("fiasp active: " + fiasp);
                 }
             });
             $("#activeInsulinInput").val(active.toFixed(1));
