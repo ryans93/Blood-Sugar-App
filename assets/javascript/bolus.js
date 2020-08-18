@@ -142,7 +142,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     console.log("basal offset: " + bolusObj.basalOffset.toFixed(4));
 
     // calc total bolus
-    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active) * activity + bolusObj.basalOffset);
+    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active / activity) * activity + bolusObj.basalOffset);
 
     // check if lowblood sugar is predicted
     if (bolusObj.total < 0) {
@@ -154,8 +154,47 @@ function calculateBolus(bs, carbs, protein, active, activity) {
         }
     }
     // calculate dosage time
-    bolusObj.time = ((bs - 90) / ((bolusObj.active + bolusObj.total) * stats.cf) + .0411111111) / .2683333333 + 0.04;
+    let desiredActive = 1 - (bolusObj.correction * activity) / (bolusObj.total + bolusObj.active);
+    let increment = desiredActive <= 1 ? 5/60 : -5/60;
+    bolusObj.time = findTime(desiredActive, increment, 0, null);
     return bolusObj;
+}
+
+function findTime(desiredActive, increment, time, prevDiff) {
+    let active;
+    var insulinType = parseInt($("#insulinTypeSelect").val());
+    switch (insulinType) {
+        case 0:
+            active = (-.01002331 * Math.pow(time, 4) + .0966847967 * Math.pow(time, 3) - .2579059829 * Math.pow(time, 2) - .1248510749 * time + 1.003651904);
+            break;
+        case 1:
+            active = (-.0093160839 * Math.pow(time, 4) + .0749320383 * Math.pow(time, 3) - .1491268454 * Math.pow(time, 2) - .2589889925 * time + 1.005624864);
+            break;
+        case 2:
+            active = (-.0032352941 * Math.pow(time, 4) + .04462959 * Math.pow(time, 3) - .17594239 * Math.pow(time, 2) - .0209426828 * time + 1.006270685);
+            break;
+        case 3:
+            active = (-.0032854107 * Math.pow(time, 4) + .0407603592 * Math.pow(time, 3) - .133232658 * Math.pow(time, 2) - .1292800205 * time + 1.012858048);
+            break;
+    }
+    let diff = desiredActive - active;
+    console.log("active " + active);
+    console.log("diff " + diff);
+    console.log("prevDiff " + prevDiff);
+    console.log("time " + time);
+    if (prevDiff === null) {
+        return findTime(desiredActive, increment, time + increment, diff);
+    }
+    else {
+        if (Math.abs(diff) <= Math.abs(prevDiff)){
+            console.log("----------------------------");
+            return findTime(desiredActive, increment, time + increment, diff);
+        }
+        else{
+            console.log(diff, prevDiff);
+            return time - increment - .25;
+        }
+    }
 }
 
 // take form data and add log into database
