@@ -204,6 +204,10 @@ $("#findActiveButton").on("click", () => {
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
     var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var insulinType = parseInt($("#insulinTypeSelect").val());
+    var activeTime = insulinType < 2 ? 4 : 6;
+    console.log("Active Time: " + activeTime);
+    console.log("Insulin Type: " + insulinType);
     // leap year
     if (year % 4 == 0) {
         monthDays[1] = 29;
@@ -219,12 +223,13 @@ $("#findActiveButton").on("click", () => {
         dateString = date.getMonth() + 1 + "-" + date.getDate() + "-" + date.getFullYear();
     }
     console.log(dateString);
+
     // check current day
     db.ref("/logs/" + dateString).once("value").then((snapshot) => {
         // loop through each reading
         snapshot.forEach((child) => {
             // check if reading is older than 4 hours
-            if ((child.val().minute < minute && child.val().hour == hour - 4) || child.val().hour < (hour - 4)) {
+            if ((child.val().minute < minute && child.val().hour == hour - activeTime) || child.val().hour < (hour - activeTime)) {
             } else {
                 console.log(child.val());
                 var lastDose = child.val().bolus;
@@ -236,29 +241,36 @@ $("#findActiveButton").on("click", () => {
                 if ($("#intra-check").is(":checked")) {
                     hourDiff *= 2;
                     // prevent hour difference from exceeding 4
-                    if (hourDiff > 4) {
-                        hourDiff = 4;
+                    if (hourDiff > activeTime) {
+                        hourDiff = activeTime;
                     }
                     console.log("intra-muscular time difference: " + hourDiff);
                 }
                 // calculate active insulin
-                active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
-                console.log("active: " + active);
-
-                var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
-                console.log("test active: " + active2);
-
-                var active6 = lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
-                console.log("test active (6 hour): " + active6);
-
-                var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                console.log("fiasp active: " + fiasp);
+                switch (insulinType) {
+                    case 0:
+                        active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
+                        console.log("active: " + active);
+                        break;
+                    case 1:
+                        active += lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
+                        console.log("active: " + active);
+                        break;
+                    case 2:
+                        active += lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
+                        console.log("active: " + active);
+                        break;
+                    case 3:
+                        active += lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
+                        console.log("active: " + active);
+                        break;
+                }
             }
         });
         $("#activeInsulinInput").val(active.toFixed(1));
     });
     // get logs from yesterday if between 12-4am
-    if (hour >= 0 && hour < 4) {
+    if (hour >= 0 && hour < activeTime) {
         // get formate for previous day's date
         day--;
         if (day == 0) {
@@ -284,7 +296,7 @@ $("#findActiveButton").on("click", () => {
             // loop through each log
             snapshot.forEach((child) => {
                 // check if log is older than 4 hours
-                if ((child.val().minute < minute && child.val().hour == (24 + hour - 4)) || child.val().hour < (24 + hour - 4)) {
+                if ((child.val().minute < minute && child.val().hour == (24 + hour - activeTime)) || child.val().hour < (24 + hour - activeTime)) {
                 } else {
                     console.log(child.val());
                     var lastDose = child.val().bolus;
@@ -296,24 +308,30 @@ $("#findActiveButton").on("click", () => {
                     if ($("#intra-check").is(":checked")) {
                         hourDiff *= 2;
                         // prevent hour difference from exceeding 4
-                        if (hourDiff > 4) {
-                            hourDiff = 4;
+                        if (hourDiff > activeTime) {
+                            hourDiff = activeTime;
                         }
                         console.log("intra-muscular time difference: " + hourDiff);
                     }
                     // calculate active insulin
-                    active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
-                    console.log(lastDose);
-                    console.log("active: " + active);
-
-                    var active2 = lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
-                    console.log("test active: " + active2);
-
-                    var active6 = lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
-                    console.log("test active (6 hour): " + active6);
-
-                    var fiasp = lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                    console.log("fiasp active: " + fiasp);
+                    switch (insulinType) {
+                        case 0:
+                            active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
+                            console.log("active: " + active);
+                            break;
+                        case 1:
+                            active += lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
+                            console.log("active: " + active);
+                            break;
+                        case 2:
+                            active += lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
+                            console.log("active: " + active);
+                            break;
+                        case 3:
+                            active += lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
+                            console.log("active: " + active);
+                            break;
+                    }
                 }
             });
             $("#activeInsulinInput").val(active.toFixed(1));
