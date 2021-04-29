@@ -22,3 +22,8 @@
 #addMealRow {
     margin-bottom: 10px;
 }
+
+.desc {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}

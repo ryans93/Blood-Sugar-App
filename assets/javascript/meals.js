@@ -54,8 +54,8 @@ function display(snapshot){
         console.log(data.key)
         var meal = data.val();
         console.log(meal);
-        var $nameContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-name>" + meal.name + "</div>";
-        var $descriptionContainer = "<div class='col-xl-5 col-lg-6 col-12 meal-Col' id=" + data.key + "-description>" + meal.description + "</div>";
+        var $nameContainer = "<div class='col-xl-2 col-lg-2 col-4 meal-Col' id=" + data.key + "-name>" + meal.name + "</div>";
+        var $descriptionContainer = "<div class='col-xl-4 col-lg-6 col-12 meal-Col desc' id=" + data.key + "-description>" + meal.description + "</div>";
         var $carbsContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-carbs>" + meal.carbs + "</div>";
         var $proteinContainer = "<div class='col-xl-1 col-lg-2 col-4 meal-Col' id=" + data.key + "-protein>" + meal.protein + "</div>";
         var $favoriteContainer;
