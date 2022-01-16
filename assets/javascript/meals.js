@@ -40,11 +40,8 @@ $("#saveMealButton").on("click", function () {
 
 // query database for meals, show favorites first
 function displayMeals() {
-    db.ref("/meals").orderByChild("favorite").equalTo(true).once("value", (snapshot) => {
+    db.ref("/meals").orderByChild("name").once("value", (snapshot) => {
         display(snapshot);
-        db.ref("/meals").orderByChild("favorite").equalTo(false).once("value", (snapshot2) => {
-            display(snapshot2);
-        });
     });
 };
 

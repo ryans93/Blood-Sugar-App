@@ -24,22 +24,15 @@ var stats;
 
 $("document").ready(() => {
     // query meals from database and push into meals array, query favorites first
-    db.ref("/meals").orderByChild("favorite").equalTo(true).once("value", (snapshot) => {
+    db.ref("/meals").orderByChild("name").once("value", (snapshot) => {
         snapshot.forEach((data) => {
             meals.push(data.val());
             var option = "<option>" + data.val().name + "</option>";
             $("#mealSelect").append(option);
         })
-        db.ref("/meals").orderByChild("favorite").equalTo(false).once("value", (snapshot2) => {
-            snapshot2.forEach((data2) => {
-                meals.push(data2.val());
-                var option = "<option>" + data2.val().name + "</option>";
-                $("#mealSelect").append(option);
-            });
-            // copy stats data from database into stats
-            db.ref("/stats").once("value", (statsSnapshot) => {
-                stats = statsSnapshot.val();
-            });
+        // copy stats data from database into stats
+        db.ref("/stats").once("value", (statsSnapshot) => {
+            stats = statsSnapshot.val();
         });
     });
 });
@@ -157,7 +150,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     }
     // calculate dosage time
     let desiredActive = 1 - (bolusObj.correction * activity) / (bolusObj.total + bolusObj.active);
-    let increment = desiredActive <= 1 ? 5/60 : -5/60;
+    let increment = desiredActive <= 1 ? 5 / 60 : -5 / 60;
     bolusObj.time = findTime(desiredActive, increment, 0, null);
     return bolusObj;
 }
@@ -188,11 +181,11 @@ function findTime(desiredActive, increment, time, prevDiff) {
         return findTime(desiredActive, increment, time + increment, diff);
     }
     else {
-        if (Math.abs(diff) <= Math.abs(prevDiff)){
+        if (Math.abs(diff) <= Math.abs(prevDiff)) {
             console.log("----------------------------");
             return findTime(desiredActive, increment, time + increment, diff);
         }
-        else{
+        else {
             console.log(diff, prevDiff);
             return time - increment - .25;
         }
