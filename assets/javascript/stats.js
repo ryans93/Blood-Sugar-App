@@ -1,5 +1,6 @@
 var stats = {
     weight: 0,
+    lbm: 0,
     sensCo: 0,
     ic: 0,
     ip: 0,
@@ -35,6 +36,7 @@ $("document").ready(() => {
         if (statsObj !== null) {
             stats = statsObj;
             $("#weightInput").val(stats.weight);
+            $("#lbmInput").val(stats.lbm);
             $("#sensitivityInput").val(stats.sensCo);
             displayStats();
         }
@@ -43,6 +45,7 @@ $("document").ready(() => {
     // use weight and sensitivity input to calculate stats
     $("#calcStats").on("click", function () {
         stats.weight = parseFloat($("#weightInput").val());
+        stats.lbm = parseFloat($("#lbmInput").val());
         stats.sensCo = parseFloat($("#sensitivityInput").val());
         stats.ic = 1800 / stats.weight;
         stats.ip = 1 / .36 * stats.ic;
@@ -59,7 +62,7 @@ $("document").ready(() => {
 // calculates stats and appends data to html
 function displayStats() {
     var basal = parseFloat(stats.weight * 0.453592 * stats.sensCo / 2);
-    var lbm = 182.6 * 0.453592;
+    var lbm = stats.lbm * 0.453592;
     var bmr = (370 + (21.6 * lbm) - lbm) * 1.1;
     console.log(bmr);
     var estimatedBasal1 = bmr * .45 / 4 / stats.ic;

@@ -27,7 +27,7 @@ $("document").ready(() => {
     db.ref("/meals").orderByChild("name").once("value", (snapshot) => {
         snapshot.forEach((data) => {
             meals.push(data.val());
-            var option = "<option>" + data.val().name + "</option>";
+            var option = `<option index=${meals.length - 1}> ${data.val().name} </option>`;
             $("#mealSelect").append(option);
         })
         // copy stats data from database into stats
@@ -39,14 +39,9 @@ $("document").ready(() => {
 
 // auto-populate carbs and protein when meal selected
 $("#mealSelect").change(() => {
-    var meal = $("#mealSelect").val();
-    for (var i = 0; i < meals.length; i++) {
-        if (meal.toLowerCase() === meals[i].name.toLowerCase()) {
-            $("#carbsInput").val(meals[i].carbs);
-            $("#proteinInput").val(meals[i].protein);
-            break;
-        }
-    }
+    let meal = meals[$("#mealSelect option:selected").attr("index")];
+    $("#carbsInput").val(meal.carbs);
+    $("#proteinInput").val(meal.protein);
 });
 
 // get form data and call calculateBolus(), append data to html
@@ -157,21 +152,9 @@ function calculateBolus(bs, carbs, protein, active, activity) {
 
 function findTime(desiredActive, increment, time, prevDiff) {
     let active;
-    var insulinType = parseInt($("#insulinTypeSelect").val());
-    switch (insulinType) {
-        case 0:
-            active = (-.01002331 * Math.pow(time, 4) + .0966847967 * Math.pow(time, 3) - .2579059829 * Math.pow(time, 2) - .1248510749 * time + 1.003651904);
-            break;
-        case 1:
-            active = (-.0093160839 * Math.pow(time, 4) + .0749320383 * Math.pow(time, 3) - .1491268454 * Math.pow(time, 2) - .2589889925 * time + 1.005624864);
-            break;
-        case 2:
-            active = (-.0032352941 * Math.pow(time, 4) + .04462959 * Math.pow(time, 3) - .17594239 * Math.pow(time, 2) - .0209426828 * time + 1.006270685);
-            break;
-        case 3:
-            active = (-.0032854107 * Math.pow(time, 4) + .0407603592 * Math.pow(time, 3) - .133232658 * Math.pow(time, 2) - .1292800205 * time + 1.012858048);
-            break;
-    }
+    var insulinType = parseFloat($("#insulinTypeSelect").val());
+    active = findIOB(insulinType, lastDose, hourDiff)
+
     let diff = desiredActive - active;
     console.log("active " + active);
     console.log("diff " + diff);
@@ -238,8 +221,8 @@ $("#findActiveButton").on("click", () => {
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
     var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var insulinType = parseInt($("#insulinTypeSelect").val());
-    var activeTime = insulinType < 2 ? 4 : 6;
+    var insulinType = parseFloat($("#insulinTypeSelect").val());
+    var activeTime = insulinType;
     console.log("Active Time: " + activeTime);
     console.log("Insulin Type: " + insulinType);
     // leap year
@@ -264,42 +247,25 @@ $("#findActiveButton").on("click", () => {
         snapshot.forEach((child) => {
             // check if reading is older than 4 hours
             if ((child.val().minute < minute && child.val().hour == hour - activeTime) || child.val().hour < (hour - activeTime)) {
-            } else {
-                console.log(child.val());
-                var lastDose = child.val().bolus;
-                var hourDiff = hour - child.val().hour;
-                var minuteDiff = minute - child.val().minute;
-                hourDiff += minuteDiff / 60;
-                console.log("time difference: " + hourDiff);
-                // double time difference for intra-muscular injection
-                if ($("#intra-check").is(":checked")) {
-                    hourDiff *= 2;
-                    // prevent hour difference from exceeding 4
-                    if (hourDiff > activeTime) {
-                        hourDiff = activeTime;
-                    }
-                    console.log("intra-muscular time difference: " + hourDiff);
-                }
-                // calculate active insulin
-                switch (insulinType) {
-                    case 0:
-                        active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
-                        console.log("active: " + active);
-                        break;
-                    case 1:
-                        active += lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
-                        console.log("active: " + active);
-                        break;
-                    case 2:
-                        active += lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
-                        console.log("active: " + active);
-                        break;
-                    case 3:
-                        active += lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                        console.log("active: " + active);
-                        break;
-                }
+                return;
             }
+            console.log(child.val());
+            var lastDose = child.val().bolus;
+            var hourDiff = hour - child.val().hour;
+            var minuteDiff = minute - child.val().minute;
+            hourDiff += minuteDiff / 60;
+            console.log("time difference: " + hourDiff);
+            // double time difference for intra-muscular injection
+            if ($("#intra-check").is(":checked")) {
+                hourDiff *= 2;
+                // prevent hour difference from exceeding 4
+                if (hourDiff > activeTime) {
+                    hourDiff = activeTime;
+                }
+                console.log("intra-muscular time difference: " + hourDiff);
+            }
+            // calculate active insulin
+            active += findIOB(insulinType, lastDose, hourDiff)
         });
         $("#activeInsulinInput").val(active.toFixed(1));
     });
@@ -331,44 +297,92 @@ $("#findActiveButton").on("click", () => {
             snapshot.forEach((child) => {
                 // check if log is older than 4 hours
                 if ((child.val().minute < minute && child.val().hour == (24 + hour - activeTime)) || child.val().hour < (24 + hour - activeTime)) {
-                } else {
-                    console.log(child.val());
-                    var lastDose = child.val().bolus;
-                    var hourDiff = hour - (child.val().hour - 24);
-                    var minuteDiff = minute - child.val().minute;
-                    hourDiff += minuteDiff / 60;
-                    console.log("time difference: " + hourDiff);
-                    // double time difference for intra-muscular injection
-                    if ($("#intra-check").is(":checked")) {
-                        hourDiff *= 2;
-                        // prevent hour difference from exceeding 4
-                        if (hourDiff > activeTime) {
-                            hourDiff = activeTime;
-                        }
-                        console.log("intra-muscular time difference: " + hourDiff);
-                    }
-                    // calculate active insulin
-                    switch (insulinType) {
-                        case 0:
-                            active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
-                            console.log("active: " + active);
-                            break;
-                        case 1:
-                            active += lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
-                            console.log("active: " + active);
-                            break;
-                        case 2:
-                            active += lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
-                            console.log("active: " + active);
-                            break;
-                        case 3:
-                            active += lastDose * (-.0032854107 * Math.pow(hourDiff, 4) + .0407603592 * Math.pow(hourDiff, 3) - .133232658 * Math.pow(hourDiff, 2) - .1292800205 * hourDiff + 1.012858048);
-                            console.log("active: " + active);
-                            break;
-                    }
+                    return;
                 }
+                console.log(child.val());
+                var lastDose = child.val().bolus;
+                var hourDiff = hour - (child.val().hour - 24);
+                var minuteDiff = minute - child.val().minute;
+                hourDiff += minuteDiff / 60;
+                console.log("time difference: " + hourDiff);
+                // double time difference for intra-muscular injection
+                if ($("#intra-check").is(":checked")) {
+                    hourDiff *= 2;
+                    // prevent hour difference from exceeding 4
+                    if (hourDiff > activeTime) {
+                        hourDiff = activeTime;
+                    }
+                    console.log("intra-muscular time difference: " + hourDiff);
+                }
+                // calculate active insulin
+                active += findIOB(insulinType, lastDose, hourDiff)
             });
             $("#activeInsulinInput").val(active.toFixed(1));
         });
     }
 });
+
+function findIOB(duration, dose, hours) {
+    console.log(`Dose: ${dose}\nTime Elapsed: ${hours} hours\n`)
+    let peakCoeff = duration == 4.5 ? 20 : duration == 5.5 ? 25 : 30;
+    let peak = duration * peakCoeff;
+    let minutes = hours * 60;
+    console.log(peakCoeff);
+
+    // logic for bilateral functions
+    if (minutes <= peak) {
+        let ob = 1 - 200 * Math.pow(minutes, 2) / (12000 * peak * duration);
+        let iob = ob * dose;
+    
+        //openAPS method
+        var x1 = (3 / duration * minutes / 5) + 1;  // scaled minutes since bolus, pre-peak; divided by 5 to work with coefficients estimated based on 5 minute increments
+        iobContrib = dose * ((-0.001852 * x1 * x1) + (0.001852 * x1) + 1.000000);
+    
+        console.log(`Bilateral % remaining (Pre-peak): ${(ob * 100).toFixed(2)}%\t IOB: ${iob.toFixed(1)}\t IOB(OpenAPS) ${iobContrib.toFixed(1)}`);
+    }
+    else {
+        let base = 60 * duration - minutes;
+        let height = 200 / (60 * duration) - 200 * (minutes - peak) / (Math.pow(60 * duration, 2) - 60 * duration * peak);
+        let ob = base * height / 200;
+        let iob = ob * dose;
+    
+        //openAPS method
+        var x2 = ((3 / duration * minutes - 75) / 5);  // scaled minutes past peak; divided by 5 to work with coefficients estimated based on 5 minute increments
+        iobContrib = dose * ((0.001323 * x2 * x2) + (-0.054233 * x2) + 0.555560);
+        console.log(`Bilateral % remaining (Post-peak): ${(ob * 100).toFixed(2)}%\t IOB: ${iob.toFixed(1)}\t IOB(OpenAPS) ${iobContrib.toFixed(1)}`);
+    }
+
+    // logic for exponential function
+    let end = duration * 60;  // end of insulin activity, in minutes
+    if (peak > 120) {
+        peak = 120;
+    }
+    else if (peak < 50) {
+        peak = 50;
+    }
+    console.log([peak, end, duration, minutes])
+    // Formula source: https://github.com/LoopKit/Loop/issues/388#issuecomment-317938473
+    var tau = peak * (1 - peak / end) / (1 - 2 * peak / end);  // time constant of exponential decay
+    tau = tau !== Infinity ? tau : peak * (1 - peak / end) / .01;
+    var a = 2 * tau / end;                                     // rise time factor
+    var S = 1 / (1 - a + (1 + a) * Math.exp(-end / tau));      // auxiliary scale factor
+    let iob = dose * (1 - S * (1 - a) * ((Math.pow(minutes, 2) / (tau * end * (1 - a)) - minutes / tau - 1) * Math.exp(-minutes / tau) + 1));
+    console.log(`Exponential % remaining (OpenAPS): ${iob.toFixed(1)}`);
+    return iob;
+}
+
+//old IoB formula
+/*
+    case 0:
+        active += lastDose * (-.01002331 * Math.pow(hourDiff, 4) + .0966847967 * Math.pow(hourDiff, 3) - .2579059829 * Math.pow(hourDiff, 2) - .1248510749 * hourDiff + 1.003651904);
+        console.log("active: " + active);
+        break;
+    case 1:
+        active += lastDose * (-.0093160839 * Math.pow(hourDiff, 4) + .0749320383 * Math.pow(hourDiff, 3) - .1491268454 * Math.pow(hourDiff, 2) - .2589889925 * hourDiff + 1.005624864);
+        console.log("active: " + active);
+        break;
+    case 2:
+        active += lastDose * (-.0032352941 * Math.pow(hourDiff, 4) + .04462959 * Math.pow(hourDiff, 3) - .17594239 * Math.pow(hourDiff, 2) - .0209426828 * hourDiff + 1.006270685);
+        console.log("active: " + active);
+        break;
+*/
