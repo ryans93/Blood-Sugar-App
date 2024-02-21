@@ -146,10 +146,11 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     // calculate dosage time
     let desiredActive = 1 - (bolusObj.correction * activity) / (bolusObj.total + bolusObj.active);
     let increment = desiredActive <= 1 ? 5 / 60 : -5 / 60;
-    bolusObj.time = findTime(desiredActive, increment, 0, null);
+    bolusObj.time = 0 //findTime(desiredActive, increment, 0, null);
     return bolusObj;
 }
 
+//deprecated. NEEDS REFACTORING
 function findTime(desiredActive, increment, time, prevDiff) {
     let active;
     var insulinType = parseFloat($("#insulinTypeSelect").val());
