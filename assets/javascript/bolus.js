@@ -68,7 +68,8 @@ $("#calcBolusButton").click(() => {
         $bolusDisplay.html("<h5>Bolus\t" + bolusObj.bolus.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h5>Correction\t" + bolusObj.correction.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h5>Active\t" + bolusObj.active.toFixed(1) + "</h5>");
-        $bolusDisplay.append("<h5>Basal Offset\t" + bolusObj.basalOffset.toFixed(1) + "</h5>");
+        // removing basal offset display. Refactor?
+        //$bolusDisplay.append("<h5>Basal Offset\t" + bolusObj.basalOffset.toFixed(1) + "</h5>");
         $bolusDisplay.append("<h4>Total\t" + bolusObj.total.toFixed(0) + "</h4>");
         $bolusDisplay.append("<h5>Symlin\t" + symlin.toFixed(0) + "mcg</h5>");
         if (bolusObj.time >= 0) {
@@ -95,7 +96,7 @@ function calculateBolus(bs, carbs, protein, active, activity) {
         bolus: 0,
         correction: 0,
         active: 0,
-        basalOffset: 0,
+        //basalOffset: 0,
         total: 0,
         lowFlag: false,
         lowBs: 0,
@@ -111,9 +112,9 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     bolusObj.correction = (bs - 90) / stats.cf * hyperMod;
     bolusObj.active = active;
 
-    // calc basal offset 
+    // calc basal offset. Note: removed. Refactor?
     //           12am    1       2       3       4       5       6       7       8       9       10      11      12     1    2       3       4      5    6       7       8    9      10      11   12am   1       2          3
-    var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452, .9916, .9916, 1.0846, 1.1001];
+    /* var rates = [.9916, .9916, 1.0846, 1.1001, 1.1466, 1.1776, 1.224, 1.255, 1.2395, 1.1931, 1.1311, 1.0691, .9452, .8677, .8367, .8367, .8367, .8212, .8212, .8367, .8677, .8677, .9142, .9452, .9916, .9916, 1.0846, 1.1001];
     var time = new Date();
     var hour = time.getHours();
     if (time.getMinutes() > 30) {
@@ -129,10 +130,10 @@ function calculateBolus(bs, carbs, protein, active, activity) {
     }
     console.log("hourly offset: " + offset);
     bolusObj.basalOffset = parseFloat(stats.weight * 0.453592 * stats.sensCo / 2) / 24 * offset;
-    console.log("basal offset: " + bolusObj.basalOffset.toFixed(4));
+    console.log("basal offset: " + bolusObj.basalOffset.toFixed(4)); */
 
     // calc total bolus
-    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active / activity) * activity + bolusObj.basalOffset);
+    bolusObj.total = Math.round((bolusObj.bolus + bolusObj.correction - bolusObj.active / activity) * activity /*+ bolusObj.basalOffset*/);
 
     // check if lowblood sugar is predicted
     if (bolusObj.total < 0) {
