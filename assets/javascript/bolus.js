@@ -275,7 +275,7 @@ $("#findActiveButton").on("click", () => {
     if (hour >= 0 && hour < activeTime) {
         // get formate for previous day's date
         day--;
-        if (day == 0) {
+        if (day == -1) {
             month--;
             if (month == -1) {
                 month = 11
