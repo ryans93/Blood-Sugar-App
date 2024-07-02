@@ -90,6 +90,14 @@ $("#calcBolusButton").click(() => {
     }
 });
 
+function clearForm() {
+    $("#carbsInput").val("0");
+    $("#proteinInput").val("0");
+    $("#mealSelect").val(0);
+    $("#activitySelect").val(1);
+    findActive();
+}
+
 // calculates bolus dosage and meal timing
 function calculateBolus(bs, carbs, protein, active, activity) {
     var bolusObj = {
@@ -207,6 +215,7 @@ $(document).on("click", "#addLogButton", () => {
         activity: activity
     };
     db.ref("/logs/" + day).push(newLog);
+    clearForm();
     // show confirmation modal
     $("#confirm-modal-title").text("Save log");
     $("#confirm-modal-text").text("Saved Successfully!");
@@ -214,7 +223,9 @@ $(document).on("click", "#addLogButton", () => {
 });
 
 // search database for all doses within 4 hours to find active insulin
-$("#findActiveButton").on("click", () => {
+$("#findActiveButton").on("click", findActive);
+
+function findActive() {
     console.log($("#intra-check").is(":checked"));
     var date = new Date();
     var hour = date.getHours();
@@ -322,7 +333,7 @@ $("#findActiveButton").on("click", () => {
             $("#activeInsulinInput").val(active.toFixed(1));
         });
     }
-});
+};
 
 function findIOB(duration, dose, hours) {
     console.log(`Dose: ${dose}\nTime Elapsed: ${hours} hours\n`)
@@ -335,11 +346,11 @@ function findIOB(duration, dose, hours) {
     if (minutes <= peak) {
         let ob = 1 - 200 * Math.pow(minutes, 2) / (12000 * peak * duration);
         let iob = ob * dose;
-    
+
         //openAPS method
         var x1 = (3 / duration * minutes / 5) + 1;  // scaled minutes since bolus, pre-peak; divided by 5 to work with coefficients estimated based on 5 minute increments
         iobContrib = dose * ((-0.001852 * x1 * x1) + (0.001852 * x1) + 1.000000);
-    
+
         console.log(`Bilateral % remaining (Pre-peak): ${(ob * 100).toFixed(2)}%\t IOB: ${iob.toFixed(1)}\t IOB(OpenAPS) ${iobContrib.toFixed(1)}`);
     }
     else {
@@ -347,7 +358,7 @@ function findIOB(duration, dose, hours) {
         let height = 200 / (60 * duration) - 200 * (minutes - peak) / (Math.pow(60 * duration, 2) - 60 * duration * peak);
         let ob = base * height / 200;
         let iob = ob * dose;
-    
+
         //openAPS method
         var x2 = ((3 / duration * minutes - 75) / 5);  // scaled minutes past peak; divided by 5 to work with coefficients estimated based on 5 minute increments
         iobContrib = dose * ((0.001323 * x2 * x2) + (-0.054233 * x2) + 0.555560);
