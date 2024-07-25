@@ -100,13 +100,14 @@
                                 <option value=1>-</option>
                                 <option value=1.1>Sedentary</option>
                                 <option value=1.25>Sedentary 60+</option>
-                                <option value=.8>Light</option>
-                                <option value=.7>Light 60+</option>
-                                <option value=.67>Moderate</option>
-                                <option value=.5>Moderate 60+</option>
-                                <option value=.5>Intense</option>
-                                <option value=.33>Intense 60+</option>
+                                <option value=0.8>Light</option>
+                                <option value=0.7>Light 60+</option>
+                                <option value=0.67>Moderate</option>
+                                <option value=0.5>Moderate 60+</option>
+                                <option value=0.51>Intense</option>
+                                <option value=0.33>Intense 60+</option>
                             </select>
+                            <button type="button" class="btn btn-primary" id="calcExco">Calculate Exercise</button>
                         </div>
                         <button type="button" class="btn btn-success" id="calcBolusButton">Calculate Bolus</button>
                     </form>
@@ -222,6 +223,33 @@
                     <p id="confirm-modal-text"></p>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="calc-exercise-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="data-modal-title">Calculate suggested Exercise Coefficient</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="avgHRInput">Enter average heart rate during exercise</label>
+                        <input type="" class="form-control" id="avgHRInput" value=0>
+                    </div>
+                    <div class="form-group">
+                        <label for="exDuration">Enter exercise duration (in minutes)</label>
+                        <input type="" class="form-control" id="durationInput" value=0>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal" id="calcExercise">Calculate</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

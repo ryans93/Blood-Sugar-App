@@ -5,7 +5,8 @@ var stats = {
     ic: 0,
     ip: 0,
     raise: 0,
-    cf: 0
+    cf: 0,
+    maxHR: 0
 };
 var meals = [];
 var $stats = $("#statDisplay");
@@ -38,6 +39,7 @@ $("document").ready(() => {
             $("#weightInput").val(stats.weight);
             $("#lbmInput").val(stats.lbm);
             $("#sensitivityInput").val(stats.sensCo);
+            $("#mhrInput").val(stats.maxHR);
             displayStats();
         }
     });
@@ -47,6 +49,7 @@ $("document").ready(() => {
         stats.weight = parseFloat($("#weightInput").val());
         stats.lbm = parseFloat($("#lbmInput").val());
         stats.sensCo = parseFloat($("#sensitivityInput").val());
+        stats.maxHR = parseInt($("#mhrInput").val());
         stats.ic = 1800 / stats.weight;
         stats.ip = 1 / .36 * stats.ic;
         stats.raise = 770.54574 * Math.pow(stats.weight, -1.000424505);

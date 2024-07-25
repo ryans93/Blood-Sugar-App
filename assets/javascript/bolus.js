@@ -399,3 +399,32 @@ function findIOB(duration, dose, hours) {
         console.log("active: " + active);
         break;
 */
+
+$("#calcExco").click(function(){
+    $("#calc-exercise-modal").modal("show");
+})
+
+$("#calcExercise").click(function() {
+    let avgHR = parseInt($("#avgHRInput").val());
+    let duration = parseInt($("#durationInput").val());
+    let cZone = Math.round(avgHR / stats.maxHR * 100);
+    console.log(cZone)
+    if (cZone < 50 || duration < 15){ // below zone 1
+        $("#activitySelect").val(1);
+    }
+    else if (cZone >= 75){ //intense
+        let value = duration < 60 ? .51 : .3;
+        $("#activitySelect").val(value);
+    }
+    else if (cZone >= 60){ //moderate
+        let value = duration < 60 ? .67 : .5;
+        console.log(value);
+        $("#activitySelect").val(value);
+    }
+    else { //light
+        let value = duration < 60 ? .8 : .7;
+        $("#activitySelect").val(value);
+    }
+    $("#avgHRInput").val("");
+    $("#durationInput").val("");
+})
